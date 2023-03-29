@@ -26,6 +26,10 @@ declare global {
         type ChatInput = ChatInputCommandInteraction & GuildInteraction;
         type Button = ButtonInteraction & GuildInteraction;
     }
+    /**
+     * Interaction payloads for file-based handlers.
+     * - Typically used in files exporting an interaction handler.
+     */
     namespace InteractionHandlerPayloads {
         type GuildChatInputCommand = ChatInputApplicationCommandData & {
             execute: (
