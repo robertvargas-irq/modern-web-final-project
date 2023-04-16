@@ -1,1 +1,1 @@
-# modern-web-final-project
+# Discord Bot - Modern Web Final Project
