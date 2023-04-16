@@ -6,6 +6,7 @@
   "description": "",
   "version": "1.0.0",
   "main": "dist/main.js",
+  "type": "module",
   "scripts": {
     "build": "npx tsc",
     "prestart": "npm run build",
@@ -24,7 +25,9 @@
   },
   "homepage": "https://github.com/robertvargas-irq/modern-web-final-project#readme",
   "dependencies": {
+    "@discordjs/rest": "^1.7.0",
     "discord.js": "^14.8.0",
+    "dotenv": "^16.0.3",
     "mongoose": "^7.0.3"
   }
 }
