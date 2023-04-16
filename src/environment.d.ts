@@ -4,6 +4,7 @@ declare global {
             ATLAS_TOKEN: string;
             ATLAS_USER: string;
             DISCORD_TOKEN: string;
+            GUILDS: string;
         }
     }
 }
