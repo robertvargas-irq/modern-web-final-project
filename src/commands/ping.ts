@@ -4,4 +4,4 @@ export const __ping: InteractionHandlerPayloads.GuildChatInputCommand = {
     async execute(interaction) {
         interaction.reply("Hello there!");
     },
-}
+};
