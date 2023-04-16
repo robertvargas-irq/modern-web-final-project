@@ -1,4 +1,6 @@
 import { Client, Collection, ClientOptions, ClientUser } from "discord.js";
+import bindEvents from "./bindEvents.js";
+import bindCommands from "./bindCommands.js";
 
 export default class BotClient extends Client {
     commands: Collection<
@@ -9,6 +11,7 @@ export default class BotClient extends Client {
 
     constructor(clientOptions: ClientOptions) {
         super(clientOptions);
-        
+        bindCommands(this);
+        bindEvents(this);
     }
 }
