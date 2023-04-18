@@ -1,28 +1,26 @@
 import { Collection } from "discord.js";
 import * as fs from "fs";
-import * as url from "url";
-import * as path from "path";
 import BotClient from "./BotClient.js";
 
-const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
+const CommandPath = "./commands";
+const CommandPathRel = "../../commands";
 
 async function bindCommands(client: BotClient) {
     // populate command files with all available commands
-    const commandsPath = path.join(__dirname, "../../commands");
     client.commands = new Collection();
     const commandFiles: (string | string[])[] = fs
-        .readdirSync(commandsPath)
+        .readdirSync(CommandPath)
         .filter((file) => file.endsWith(".js"));
 
     // check for nested commands, and populate commandFiles with them
     const commandSubDirectories = fs
-        .readdirSync(commandsPath)
+        .readdirSync(CommandPath)
         .filter((subdir) =>
-            fs.statSync(`${commandsPath}/${subdir}`).isDirectory()
+            fs.statSync(`${CommandPath}/${subdir}`).isDirectory()
         );
     for (let dir of commandSubDirectories) {
         let files = fs
-            .readdirSync(`${commandsPath}/${dir}`)
+            .readdirSync(`${CommandPath}/${dir}`)
             .filter((file) => file.endsWith(".js"));
         for (let file of files) commandFiles.push([dir, file]);
     }
@@ -33,14 +31,14 @@ async function bindCommands(client: BotClient) {
         if (Array.isArray(file))
             command = (
                 await (import(
-                    `../../commands/${file[0]}/${file[1]}`
+                    `${CommandPathRel}/${file[0]}/${file[1]}`
                 ) as Promise<{
                     default: InteractionHandlerPayloads.GuildChatInputCommand;
                 }>)
             ).default;
         else
             command = (
-                await (import(`../../commands/${file}`) as Promise<{
+                await (import(`${CommandPathRel}/${file}`) as Promise<{
                     default: InteractionHandlerPayloads.GuildChatInputCommand;
                 }>)
             ).default;
