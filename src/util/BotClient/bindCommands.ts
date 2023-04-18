@@ -1,9 +1,12 @@
 import { Collection } from "discord.js";
 import * as fs from "fs";
+import * as url from "url";
 import * as path from "path";
 import BotClient from "./BotClient.js";
 
-function bindCommands(client: BotClient) {
+const __dirname = url.fileURLToPath(new URL(".", import.meta.url));
+
+async function bindCommands(client: BotClient) {
     // populate command files with all available commands
     const commandsPath = path.join(__dirname, "../../commands");
     client.commands = new Collection();
@@ -28,11 +31,23 @@ function bindCommands(client: BotClient) {
     for (let file of commandFiles) {
         let command;
         if (Array.isArray(file))
-            command = require(`../../commands/${file[0]}/${file[1]}`).default;
-        else command = require(`../../commands/${file}`).default;
+            command = (
+                await (import(
+                    `../../commands/${file[0]}/${file[1]}`
+                ) as Promise<{
+                    default: InteractionHandlerPayloads.GuildChatInputCommand;
+                }>)
+            ).default;
+        else
+            command = (
+                await (import(`../../commands/${file}`) as Promise<{
+                    default: InteractionHandlerPayloads.GuildChatInputCommand;
+                }>)
+            ).default;
+        console.log({ command });
 
-        // push command to commands collection
-        client.commands.set(command.name, command);
+        // push command to commands collection; Discord.js is not recognizing string
+        client.commands.set(command.name as unknown as number, command);
     }
 }
 

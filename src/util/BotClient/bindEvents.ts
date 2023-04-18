@@ -1,15 +1,18 @@
 import * as fs from "fs";
+import * as url from 'url';
 import * as path from "path";
 import BotClient from "./BotClient.js";
 
-function bindEvents(client: BotClient) {
+const __dirname = url.fileURLToPath(new URL('.', import.meta.url));
+
+async function bindEvents(client: BotClient) {
     // init events
     const eventPath = path.join(__dirname, "../../events");
     const eventFiles = fs
         .readdirSync(eventPath)
         .filter((file) => file.endsWith(".js"));
     for (const file of eventFiles) {
-        const { default: event } = require(`${eventPath}/${file}`);
+        const { default: event } = await import(`${eventPath}/${file}`);
 
         if (event.once)
             client.once(event.name, (...args) =>
