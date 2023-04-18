@@ -11,9 +11,17 @@ async function registerClientCommands(client: BotClient) {
     );
     const queue = [];
 
-    // register command if being deployed in guilds
+    // ensure guilds are defined
+    const guilds = process.env.GUILDS.split(",");
+    if (!guilds.length)
+        throw new Error(
+            "ENV DOES NOT HAVE TOKEN [GUILDS] DEFINED." +
+                "\nEnsure that the field is defined and contains all guild ids as a comma-separated string."
+        );
+
+    // register commands
     console.log("🧩 Reloading all application commands...");
-    for (let g of process.env.GUILDS.split(",")) {
+    for (let g of guilds) {
         console.log(`🔄️ Reloading Guild ID: [${g}]`);
         queue.push(client.guilds.cache.get(g)?.commands.set(commands));
         queue.push(
