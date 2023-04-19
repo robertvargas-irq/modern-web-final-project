@@ -1,8 +1,8 @@
 const __ping: InteractionHandlerPayloads.GuildChatInputCommand = {
     name: "ping",
-    description: "Testing!",
+    description: "Replies with pong!",
     async execute(interaction) {
-        interaction.reply("Hello there!");
+        interaction.reply("Pong!");
     },
 };
 
