@@ -5,17 +5,19 @@ import {
     ChatInputCommandInteraction,
     Guild,
     GuildMember,
-    TextBasedChannel,
+    GuildTextBasedChannel,
 } from "discord.js";
+import BotClient from "./util/BotClient/BotClient.ts";
 
 /**
  * Interface for interactions received within a Guild.
  */
 interface GuildInteraction {
+    client: BotClient,
     member: GuildMember,
     guild: Guild;
     guildId: string;
-    channel: TextBasedChannel;
+    channel: GuildTextBasedChannel;
 }
 
 declare global {
