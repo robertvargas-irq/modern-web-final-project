@@ -1,0 +1,15 @@
+name: Check Prettier usage
+on:
+  pull_request:
+    branches:
+      - main
+jobs:
+  test:
+    name: Check for Prettier usage on source code
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install packages
+        run: npm ci
+      - name: Prettier
+        run: npm run format
