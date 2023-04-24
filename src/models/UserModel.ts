@@ -6,6 +6,14 @@ const userSchema = new Schema<User>({
         type: String,
         required: true,
     },
+    displayName: {
+        type: String,
+        default: null,
+    },
+    bio: {
+        type: String,
+        default: null,
+    },
 });
 
 const UserModel = model<User>("User", userSchema);
