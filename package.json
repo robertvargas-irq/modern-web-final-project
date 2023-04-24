@@ -12,7 +12,8 @@
     "build": "npx tsc",
     "prestart": "npm run build",
     "start": "node .",
-    "format": "npx prettier --check src",
+    "format": "npx prettier --write src",
+    "check-format": "npx prettier --check src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
