@@ -1,5 +1,6 @@
 {
   "devDependencies": {
+    "prettier": "^2.8.8",
     "typescript": "^5.0.2"
   },
   "name": "modern-web-final-project",
@@ -11,6 +12,7 @@
     "build": "npx tsc",
     "prestart": "npm run build",
     "start": "node .",
+    "format": "npx prettier --check src",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
