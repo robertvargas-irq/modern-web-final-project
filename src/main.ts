@@ -13,6 +13,6 @@ await db_connect();
 // create client and login
 const client = new BotClient({
     intents: [GIB.Guilds, GIB.GuildMembers, GIB.GuildMessages],
-    partials: [Partials.Channel]
+    partials: [Partials.Channel],
 });
 await client.login(process.env.DISCORD_TOKEN);

@@ -13,8 +13,8 @@ import BotClient from "./util/BotClient/BotClient.ts";
  * Interface for interactions received within a Guild.
  */
 interface GuildInteraction {
-    client: BotClient,
-    member: GuildMember,
+    client: BotClient;
+    member: GuildMember;
     guild: Guild;
     guildId: string;
     channel: GuildTextBasedChannel;
@@ -34,9 +34,7 @@ declare global {
      */
     namespace InteractionHandlerPayloads {
         type GuildChatInputCommand = ChatInputApplicationCommandData & {
-            execute: (
-                interaction: GuildInteractions.ChatInput
-            ) => Promise<any>;
+            execute: (interaction: GuildInteractions.ChatInput) => Promise<any>;
         };
     }
 }
