@@ -16,7 +16,7 @@ const userModalComponents = (user: HydratedDocument<User>) => [
     new ActionRowBuilder<TextInputBuilder>({
         components: [
             new TextInputBuilder({
-                customId: `${ModalId}:name`,
+                customId: "name",
                 label: "Display Name",
                 value: user.displayName ?? "",
                 style: TextInputStyle.Short,
@@ -26,7 +26,7 @@ const userModalComponents = (user: HydratedDocument<User>) => [
     new ActionRowBuilder<TextInputBuilder>({
         components: [
             new TextInputBuilder({
-                customId: `${ModalId}:bio`,
+                customId: "bio",
                 label: "User Bio",
                 value: user.bio ?? "",
                 style: TextInputStyle.Paragraph,
