@@ -25,11 +25,10 @@ const __profile: InteractionHandlerPayloads.GuildChatInputCommand = {
         }
         await submission.deferUpdate();
 
-        const name = submission.fields.getTextInputValue("name");
-        const bio = submission.fields.getTextInputValue("bio");
-
         try {
             // update info
+            const name = submission.fields.getTextInputValue("name");
+            const bio = submission.fields.getTextInputValue("bio");
             user.displayName = name;
             user.bio = bio;
 
