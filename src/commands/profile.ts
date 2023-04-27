@@ -1,7 +1,6 @@
-import { Schema } from "mongoose";
 import { fetchUser, userModal } from "../util/UserUtil/index.js";
-import User from "../interfaces/User.js";
-import UserModel from "../models/UserModel.js";
+
+const ModalTime = 240_000;
 
 const __profile: InteractionHandlerPayloads.GuildChatInputCommand = {
     name: "profile",
@@ -16,12 +15,12 @@ const __profile: InteractionHandlerPayloads.GuildChatInputCommand = {
 
         // await results and collect
         const submission = await interaction.awaitModalSubmit({
-            time: 240000,
+            time: ModalTime,
         });
 
         // silly man did not do the submit in time like a mongrel
         if (!submission) {
-            console.log(`Submission canceled due to timeout.`);
+            console.log("Submission canceled due to timeout.");
             return;
         }
         submission.deferUpdate();
@@ -40,6 +39,10 @@ const __profile: InteractionHandlerPayloads.GuildChatInputCommand = {
                 `User ${interaction.user.username} profile updated in db.`
             );
         } catch (error) {
+            submission.followUp({
+                content: "There was an error sending in your response",
+                ephemeral: true,
+            });
             console.error(
                 `Ur mom is invalid (error updating database): ${error}`
             );
