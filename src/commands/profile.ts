@@ -23,7 +23,7 @@ const __profile: InteractionHandlerPayloads.GuildChatInputCommand = {
             console.log("Submission canceled due to timeout.");
             return;
         }
-        submission.deferUpdate();
+        await submission.deferUpdate();
 
         const name = submission.fields.getTextInputValue("name");
         const bio = submission.fields.getTextInputValue("bio");
