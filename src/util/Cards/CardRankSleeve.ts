@@ -1,7 +1,10 @@
 import Card from "./Card.js";
 import { SuitCount } from "./CardCosmetics.js";
 
-interface CardOptions {
+/**
+ * Initializing options for CardRankSleeve.
+ */
+interface CardRankSleeveOptions {
     rank: number;
     startingCount: number;
 }
@@ -23,7 +26,7 @@ export default class CardRankSleeve {
      * Remaining cards in the sleeve.
      */
     private cardCount: number;
-    constructor({ rank, startingCount }: CardOptions) {
+    constructor({ rank, startingCount }: CardRankSleeveOptions) {
         // initialize array with starting count
         this.cardCount = SuitCount * startingCount;
         this.cards = new Array(SuitCount);
