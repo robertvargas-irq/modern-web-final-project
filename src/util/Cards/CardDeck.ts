@@ -2,13 +2,13 @@ import { CardRanks, SuitCount } from "./CardCosmetics.js";
 import CardRankSleeve from "./CardRankSleeve.js";
 
 export class CardDeck {
-    private cards: Array<CardRankSleeve>;
+    private cardSleeves: Array<CardRankSleeve>;
     private cardsRemaining: number;
 
     /**
      * Create a new CardDeck instance.
-     * @param cardPacks The number of card decks
-     *              mixed into the current hand.
+     * @param cardPacks
+     * The number of card decks mixed into the current hand.
      */
     constructor(cardPacks: number = 1) {
         // validate pack count
@@ -19,9 +19,9 @@ export class CardDeck {
         }
 
         // populate card sleeves
-        this.cards = new Array(CardRanks);
+        this.cardSleeves = new Array(CardRanks);
         for (let rank = 0; rank < CardRanks; rank++) {
-            this.cards[rank] = new CardRankSleeve({
+            this.cardSleeves[rank] = new CardRankSleeve({
                 rank,
                 startingCount: cardPacks,
             });
@@ -29,5 +29,40 @@ export class CardDeck {
 
         // cache remaining cards
         this.cardsRemaining = CardRanks * SuitCount * cardPacks;
+    }
+
+    /**
+     * Check if the deck is empty.
+     */
+    public get empty() {
+        return this.cardsRemaining <= 0;
+    }
+
+    /**
+     * Get a random card from the deck.
+     * @returns Resolved Card.
+     */
+    public pullRandomCard() {
+        // null if empty
+        if (this.empty) return null;
+
+        // get from a random rank sleeve
+        const startRank = Math.floor(Math.random() * CardRanks);
+
+        // continue until the first non-empty sleeve is reached
+        for (let i = 0; i < CardRanks; i++) {
+            // get card sleeve
+            const sleeve = this.cardSleeves[(startRank + i) % CardRanks];
+
+            // pull a random card from the sleeve
+            const card = sleeve.pullRandom();
+            if (!card) continue;
+
+            // card pulled, reduce the remaining count and return resolved
+            this.cardsRemaining--;
+            return card;
+        }
+
+        return null;
     }
 }
