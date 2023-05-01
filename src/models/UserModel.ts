@@ -25,7 +25,7 @@ const userSchema = new Schema<User>({
     points: {
         type: Number,
         default: 0,
-    }
+    },
 });
 
 const UserModel = model<User>("User", userSchema);
