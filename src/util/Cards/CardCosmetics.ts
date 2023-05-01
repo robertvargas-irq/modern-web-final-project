@@ -59,4 +59,9 @@ export const GetRankName = (rank: number) => {
     // numbered cards
     return `${rank + 1}`;
 };
-export const GetSuitName = (variation: number) => Suits[variation];
+
+/**
+ * Get the string representation of the suit.
+ * @param suit Card suit.
+ */
+export const GetSuitName = (suit: number) => Suits[suit];
