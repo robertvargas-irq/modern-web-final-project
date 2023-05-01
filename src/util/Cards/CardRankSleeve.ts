@@ -47,6 +47,10 @@ export default class CardRankSleeve {
      * @param suit Card suit.
      */
     public suitIsEmpty = (suit: number) => this.cards[suit] <= 0;
+    /**
+     * Decrement the count of a card suit.
+     * @param suit Card suit to remove from.
+     */
     public remove(suit: number) {
         // ensure sleeve slot is not empty
         if (this.suitIsEmpty(suit)) {
