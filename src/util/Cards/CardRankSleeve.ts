@@ -1,6 +1,11 @@
 import Card from "./Card.js";
 import { SuitCount } from "./CardCosmetics.js";
 
+interface CardOptions {
+    rank: number;
+    startingCount: number;
+}
+
 /**
  * Helper class for keeping track of the count of
  * suits of a card rank.
@@ -86,9 +91,4 @@ export default class CardRankSleeve {
         }
         return null;
     }
-}
-
-interface CardOptions {
-    rank: number;
-    startingCount: number;
 }
