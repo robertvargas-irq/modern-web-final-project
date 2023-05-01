@@ -30,6 +30,11 @@ export type SuitTypes = (typeof Suits)[number];
 export const SuitCount = Suits.length;
 
 /**
+ * Card ranks in play.
+ */
+export const CardRanks = 13;
+
+/**
  * Get the associated image URL for a card based
  * on its rank and suit.
  * @param rank Card rank.
