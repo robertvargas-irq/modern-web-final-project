@@ -20,9 +20,9 @@ export class CardDeck {
 
         // populate card sleeves
         this.cards = new Array(CardRanks);
-        for (let face = 0; face < CardRanks; face++) {
-            this.cards[face] = new CardRankSleeve({
-                rank: face,
+        for (let rank = 0; rank < CardRanks; rank++) {
+            this.cards[rank] = new CardRankSleeve({
+                rank,
                 startingCount: cardPacks,
             });
         }
