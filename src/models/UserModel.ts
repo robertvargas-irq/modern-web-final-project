@@ -14,6 +14,18 @@ const userSchema = new Schema<User>({
         type: String,
         default: null,
     },
+    wins: {
+        type: Number,
+        default: 0,
+    },
+    losses: {
+        type: Number,
+        default: 0,
+    },
+    points: {
+        type: Number,
+        default: 0,
+    }
 });
 
 const UserModel = model<User>("User", userSchema);
