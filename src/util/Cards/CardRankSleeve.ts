@@ -2,8 +2,8 @@ import Card from "./Card.js";
 import { SuitCount } from "./CardCosmetics.js";
 
 /**
- * Helper class for keeping track of variations
- * of a card and the amount of cards remaining.
+ * Helper class for keeping track of the count of
+ * suits of a card rank.
  */
 export default class CardRankSleeve {
     /**
@@ -38,13 +38,13 @@ export default class CardRankSleeve {
     }
 
     /**
-     * Check if no more cards remain of a given type.
-     * @param variation Card type.
+     * Check if no more cards remain of a given suit.
+     * @param suit Card suit.
      */
-    public variationIsEmpty = (variation: number) => this.cards[variation] <= 0;
+    public suitIsEmpty = (suit: number) => this.cards[suit] <= 0;
     public remove(suit: number) {
         // ensure sleeve slot is not empty
-        if (this.variationIsEmpty(suit)) {
+        if (this.suitIsEmpty(suit)) {
             throw new Error(
                 `Trying to remove card from empty sleeve slot; Card suit ${suit} is already empty.`
             );
@@ -56,17 +56,17 @@ export default class CardRankSleeve {
     }
     /**
      * Pull and resolve a card from the sleeve.
-     * @param variation Card type.
+     * @param suit Card suit.
      */
-    public pull(variation: number) {
+    public pull(suit: number) {
         // null if no cards are left
-        if (this.variationIsEmpty(variation)) {
+        if (this.suitIsEmpty(suit)) {
             return null;
         }
 
         // remove from the deck and resolve into a usable card
-        this.remove(variation);
-        return new Card(this.rank, variation);
+        this.remove(suit);
+        return new Card(this.rank, suit);
     }
 
     /**
@@ -76,13 +76,12 @@ export default class CardRankSleeve {
         // if empty return null
         if (this.empty) return null;
 
-        // pull a random card
-        const variations = this.cards.length;
-        const start = Math.floor(Math.random() * variations);
+        // pull a card of a random suit
+        const start = Math.floor(Math.random() * SuitCount);
 
-        // iterate until the first non-empty sleeve is pulled from
-        for (let i = 0; i < variations; i++) {
-            const card = this.pull((start + i) % variations);
+        // iterate until the first non-empty suit sleeve is pulled from
+        for (let i = 0; i < SuitCount; i++) {
+            const card = this.pull((start + i) % SuitCount);
             if (card) return card;
         }
         return null;
