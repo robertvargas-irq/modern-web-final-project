@@ -1,6 +1,12 @@
 import { CardRanks, SuitCount } from "./CardCosmetics.js";
 import CardRankSleeve from "./CardRankSleeve.js";
 
+/**
+ * Class to emulate a card deck of multi-suited cards.
+ * - There can be multiple card packs mixed into the deck.
+ * - Properly initializes each card rank's suit count based
+ *   on the number of mixed in card decks.
+ */
 export class CardDeck {
     private cardSleeves: Array<CardRankSleeve>;
     private cardsRemaining: number;
