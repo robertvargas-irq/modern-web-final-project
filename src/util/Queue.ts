@@ -16,7 +16,7 @@ export class Queue<T> {
 
         // length 1 add
         if (this.head === this.tail) {
-            this.head.setNext()
+            this.head.setNext();
         }
 
         // add to existing list
