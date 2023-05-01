@@ -49,14 +49,14 @@ export const GetImageURL = (rank: number, suit: number) =>
  */
 export const GetRankName = (rank: number) => {
     // ace card
-    if (rank === 1) {
+    if (rank === 0) {
         return "Ace";
     }
     // face cards
-    if (rank > 10) {
-        return FaceCards[rank - 10];
+    if (rank > 9) {
+        return FaceCards[rank - 9];
     }
     // numbered cards
-    return `${rank}`;
+    return `${rank + 1}`;
 };
 export const GetSuitName = (variation: number) => Suits[variation];
