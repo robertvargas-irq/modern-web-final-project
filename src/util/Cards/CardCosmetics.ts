@@ -1,0 +1,57 @@
+/**
+ * Card image URLs.
+ */
+const ImageURLs = [
+    ["", "", "", ""], // Ace
+    ["", "", "", ""], // 2
+    ["", "", "", ""], // 3
+    ["", "", "", ""], // 4
+    ["", "", "", ""], // 5
+    ["", "", "", ""], // 6
+    ["", "", "", ""], // 7
+    ["", "", "", ""], // 8
+    ["", "", "", ""], // 9
+    ["", "", "", ""], // 10
+    ["", "", "", ""], // J
+    ["", "", "", ""], // K
+    ["", "", "", ""], // Q
+] as const;
+
+/**
+ * Face card names.
+ */
+const FaceCards = ["Jack", "Queen", "King"] as const;
+
+/**
+ * Card suits in play.
+ */
+const Suits = ["Diamonds", "Clubs", "Hearts", "Spades"] as const;
+export type SuitTypes = (typeof Suits)[number];
+export const SuitCount = Suits.length;
+
+/**
+ * Get the associated image URL for a card based
+ * on its rank and suit.
+ * @param rank Card rank.
+ * @param suit Card suit.
+ */
+export const GetImageURL = (rank: number, suit: number) =>
+    ImageURLs[rank][suit];
+
+/**
+ * Get the associated name for a card's rank.
+ * @param rank Card rank.
+ */
+export const GetRankName = (rank: number) => {
+    // ace card
+    if (rank === 1) {
+        return "Ace";
+    }
+    // face cards
+    if (rank > 10) {
+        return FaceCards[rank - 10];
+    }
+    // numbered cards
+    return `${rank}`;
+};
+export const GetSuitName = (variation: number) => Suits[variation];
