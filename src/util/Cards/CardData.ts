@@ -1,5 +1,8 @@
 import CardVisual from "./CardVisual.js";
 
+/**
+ * Minified wrapper for important card data.
+ */
 export interface CardData {
     /**
      * The card's rank.
