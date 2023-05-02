@@ -1,27 +1,36 @@
 import { GuildMember } from "discord.js";
 import { MemberDocument } from "../../models/MemberModel.js";
+import { CardHand } from "../Cards/index.js";
 
+/**
+ * Wrapper for players in-game.
+ */
 export class Player {
+    public memberDoc: MemberDocument;
+    public member: GuildMember;
+    public cards: CardHand;
     public loss: boolean;
     public stay: boolean;
-    public userDB: MemberDocument;
-    public member: GuildMember;
-    public cards: number[]; //change this to only take card objects
 
-    constructor(userDB: MemberDocument, member: GuildMember) {
+    /**
+     * Creates a new Player instance.
+     * @param memberDoc Member entry in the database.
+     * @param member Member snowflake from the guild.
+     */
+    constructor(memberDoc: MemberDocument, member: GuildMember) {
+        this.memberDoc = memberDoc;
+        this.member = member;
         this.loss = false;
         this.stay = false;
-        this.cards = [];
-        this.userDB = userDB;
-        this.member = member;
+        this.cards = new CardHand();
     }
 
     /**
-     * resets stay, loss and cards for player
+     * Resets stay, loss and cards for player
      */
     reset() {
         this.stay = false;
         this.loss = false;
-        this.cards = [];
+        this.cards.clear();
     }
 }
