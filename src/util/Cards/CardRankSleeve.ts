@@ -1,5 +1,6 @@
-import Card from "./Card.js";
+import CardVisual from "./CardVisual.js";
 import { SuitCount } from "./CardCosmetics.js";
+import { CardData } from "./CardData.js";
 
 /**
  * Initializing options for CardRankSleeve.
@@ -78,7 +79,7 @@ export default class CardRankSleeve {
 
         // remove from the deck and resolve into a usable card
         this.remove(suit);
-        return new Card(this.rank, suit);
+        return new CardVisual(CardData(this.rank, suit));
     }
 
     /**
