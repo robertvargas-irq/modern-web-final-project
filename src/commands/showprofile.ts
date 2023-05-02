@@ -2,7 +2,7 @@ import { fetchUser } from "../util/UserUtil/index.js";
 import { EmbedBuilder } from "discord.js";
 
 const __showProfile: InteractionHandlerPayloads.GuildChatInputCommand = {
-    name: "showprofile",
+    name: "show-profile",
     description: "Display your profile in a funni embed",
     async execute(interaction) {
         // fetch user profile
@@ -34,8 +34,8 @@ const __showProfile: InteractionHandlerPayloads.GuildChatInputCommand = {
                 },
             ],
         });
-
-        interaction.reply({ embeds: [profileEmbed], ephemeral: false }); // send the funni embed
+        // send the funni embed
+        interaction.reply({ embeds: [profileEmbed] });
     },
 };
 
