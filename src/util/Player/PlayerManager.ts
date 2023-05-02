@@ -1,5 +1,5 @@
 import { GuildMember } from "discord.js";
-import { Player } from "./player.js";
+import { Player } from "./Player.js";
 import { MemberDocument } from "../../models/MemberModel.js";
 
 class PlayerManager {
@@ -60,12 +60,11 @@ class PlayerManager {
     }
 
     /**
-     * sets stay and loss false for all players
+     * resets stay, loss and cards for all players
      */
-    reset() {
+    resetAll() {
         this.players.forEach((player) => {
-            player.stay = false;
-            player.loss = false;
+            player.reset();
         });
     }
 }
