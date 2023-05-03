@@ -11,10 +11,10 @@ const GameStates = ["waiting", "players", "dealer", "end"] as const;
 
 export default class GameManager {
     private interaction: GuildInteractions.ChatInput;
-    private players: PlayerManager;
     private dealer: Dealer;
     private deck: CardDeck;
     private state: number;
+    public players: PlayerManager;
 
     /**
      * Create a new instance of GameManager.
