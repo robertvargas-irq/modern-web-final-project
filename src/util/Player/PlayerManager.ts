@@ -9,6 +9,14 @@ export default class PlayerManager {
         this.players = new Map();
     }
 
+    /**
+     * Check to see if there are no players
+     * in the current manager.
+     */
+    get isEmpty() {
+        return this.players.size <= 0;
+    }
+
     addPlayer(UserDB: MemberDocument, member: GuildMember) {
         //creates instance of player
         const player = new Player(UserDB, member);
