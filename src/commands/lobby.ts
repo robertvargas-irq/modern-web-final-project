@@ -1,4 +1,9 @@
-import { EmbedBuilder, ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
+import {
+    EmbedBuilder,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+} from "discord.js";
 import GameManager from "../util/GameManager/GameManager.js";
 import { fetchMember } from "../util/MemberUtil/MemberFetch.js";
 
@@ -35,18 +40,26 @@ const __lobby: InteractionHandlerPayloads.GuildChatInputCommand = {
             },
         ]);
 
-        /** idk wht this dont work
-        const joinButton = new ButtonBuilder()
-            .setCustomId("join-game")
-            .setLabel("Join")
-            .setStyle(ButtonStyle.Success);
+        const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
+            new ButtonBuilder()
+                .setCustomId("join-game")
+                .setLabel("Join")
+                .setStyle(ButtonStyle.Success),
 
-        const actionRow = new ActionRowBuilder().addComponents(joinButton)
-        */
+            new ButtonBuilder()
+                .setCustomId("leave-game")
+                .setLabel("Leave")
+                .setStyle(ButtonStyle.Danger),
+
+            new ButtonBuilder()
+                .setCustomId("start-game")
+                .setLabel("Start Now")
+                .setStyle(ButtonStyle.Primary)
+        );
 
         await interaction.reply({
             embeds: [embed],
-            // components: [actionRow] //this line has errors
+            components: [actionRow],
         });
     },
 };
