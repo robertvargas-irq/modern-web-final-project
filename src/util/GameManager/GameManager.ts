@@ -35,6 +35,11 @@ export default class GameManager {
         return GameStates[this.state];
     }
 
+    /**
+     * Advance to the next game state.
+     * - Loops around to the beginning if the final
+     *   state is passed.
+     */
     advanceGameState() {
         this.state = (this.state + 1) % GameStates.length;
     }
