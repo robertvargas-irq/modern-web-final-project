@@ -1,6 +1,6 @@
 import { GuildMember } from "discord.js";
 import { MemberDocument } from "../../models/MemberModel.js";
-import { CardHand } from "../Cards/CardHand.js";
+import CardHand from "../Cards/CardHand.js";
 
 /**
  * Wrapper for players in-game.

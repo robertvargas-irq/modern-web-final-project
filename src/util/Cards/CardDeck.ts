@@ -7,7 +7,7 @@ import CardRankSleeve from "./CardRankSleeve.js";
  * - Properly initializes each card rank's suit count based
  *   on the number of mixed in card decks.
  */
-export class CardDeck {
+export default class CardDeck {
     private cardSleeves: Array<CardRankSleeve>;
     private cardsRemaining: number;
 

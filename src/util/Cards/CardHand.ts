@@ -3,7 +3,7 @@ import { CardData } from "./CardData.js";
 /**
  * Wrapper for a player's hand of cards.
  */
-export class CardHand {
+export default class CardHand {
     cards: Array<CardData>;
     constructor() {
         this.cards = [];
