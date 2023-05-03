@@ -2,7 +2,7 @@ import { GuildMember } from "discord.js";
 import { Player } from "./Player.js";
 import { MemberDocument } from "../../models/MemberModel.js";
 
-class PlayerManager {
+export default class PlayerManager {
     players: Map<string, Player>;
 
     constructor() {
@@ -68,5 +68,3 @@ class PlayerManager {
         });
     }
 }
-
-export { PlayerManager };
