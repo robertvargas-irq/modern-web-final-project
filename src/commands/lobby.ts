@@ -1,15 +1,10 @@
-import {
-    EmbedBuilder,
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonStyle,
-} from "discord.js";
+import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
 import GameManager from "../util/GameManager/GameManager.js";
 import { fetchMember } from "../util/MemberUtil/MemberFetch.js";
 
 const __lobby: InteractionHandlerPayloads.GuildChatInputCommand = {
-    name: "lobby",
-    description: "ahhhhhhhhHHHHHhh",
+    name: "start",
+    description: "Start a Black Jack Game",
 
     async execute(interaction) {
         const gameManager = new GameManager(interaction);
@@ -20,26 +15,10 @@ const __lobby: InteractionHandlerPayloads.GuildChatInputCommand = {
             interaction.member
         );
 
-        const embed = new EmbedBuilder()
-            .setTitle("Lobby")
-            .setDescription("Waiting for game to start...")
-            .setImage(
-                "https://cdn.discordapp.com/attachments/1098006998429216824/1103403070399987823/istockphoto-915871752-612x612.jpg"
-            )
-            .setTimestamp();
+        // get the lobby emebed
+        const embed = gameManager.LobbyEmbed();
 
-        const playerList = gameManager.players
-            .getAllPlayers()
-            .map((player) => player.member.displayName)
-            .join(", ");
-
-        embed.addFields([
-            {
-                name: "Players:",
-                value: playerList || "None",
-            },
-        ]);
-
+        // creates the join, leave and start now buttons
         const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
             new ButtonBuilder()
                 .setCustomId("join-game")
@@ -61,6 +40,11 @@ const __lobby: InteractionHandlerPayloads.GuildChatInputCommand = {
             embeds: [embed],
             components: [actionRow],
         });
+
+        // starts game in two minutes
+        setTimeout(async () => {
+            await gameManager.start();
+        }, 10 * 1000);
     },
 };
 
