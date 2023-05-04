@@ -1,3 +1,4 @@
+import { CardRanks, SuitCount } from "./CardCosmetics.js";
 import CardVisual from "./CardVisual.js";
 
 /**
@@ -28,10 +29,29 @@ export interface CardData {
  * @param suit Card suit.
  * @returns Card data object.
  */
-export const CardData = (rank: number, suit: number): CardData => ({
-    rank,
-    suit,
-    resolve() {
-        return new CardVisual(this);
-    },
-});
+export function CardData(rank: number, suit: number): CardData {
+    // validate ranges for rank and suit
+    if (rank < 0 || rank > CardRanks) {
+        throw new Error(
+            `CardData error: Given card rank [${rank}] is out of rank range: [0, ${
+                CardRanks - 1
+            }]`
+        );
+    }
+    if (suit < 0 || suit > SuitCount) {
+        throw new Error(
+            `CardData error: Given card suit [${suit}] is out of suit range: [0, ${
+                SuitCount - 1
+            }]`
+        );
+    }
+
+    // augment card data and return
+    return {
+        rank,
+        suit,
+        resolve() {
+            return new CardVisual(this);
+        },
+    };
+}
