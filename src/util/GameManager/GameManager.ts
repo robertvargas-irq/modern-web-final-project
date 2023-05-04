@@ -1,3 +1,4 @@
+import { EmbedBuilder, Message } from "discord.js";
 import CardDeck from "../Cards/CardDeck.js";
 import PlayerManager from "../Player/PlayerManager.js";
 import Dealer from "./Dealer.js";
@@ -11,10 +12,10 @@ const GameStates = ["waiting", "players", "dealer", "end"] as const;
 
 export default class GameManager {
     private interaction: GuildInteractions.ChatInput;
-    private players: PlayerManager;
     private dealer: Dealer;
     private deck: CardDeck;
     private state: number;
+    public players: PlayerManager;
 
     /**
      * Create a new instance of GameManager.
@@ -48,6 +49,12 @@ export default class GameManager {
      * Start the game.
      */
     start() {
+        // update lobby embed to say the game has started
+        const newDescription = this.LobbyEmbed().setDescription(
+            "The Game Has Started!"
+        );
+        this.interaction.editReply({ embeds: [newDescription] });
+
         // error if the game is empty
         if (this.players.isEmpty) {
             throw new Error(
@@ -60,5 +67,32 @@ export default class GameManager {
 
         // begin game loop
         // ! IMPLEMENT ME
+    }
+
+    LobbyEmbed() {
+        const lobbyEmbed = new EmbedBuilder()
+            .setTitle("Lobby")
+            .setDescription(
+                `The game will start <t:${Math.floor(
+                    Date.now() / 1000 + 10
+                )}:R>`
+            )
+            .setImage(
+                "https://cdn.discordapp.com/attachments/1098006998429216824/1103403070399987823/istockphoto-915871752-612x612.jpg"
+            )
+            .setTimestamp(Date.now());
+
+        const playerList = this.players
+            .getAllPlayers()
+            .map((player) => player.member.displayName)
+            .join(", ");
+
+        lobbyEmbed.addFields([
+            {
+                name: "Players:",
+                value: playerList || "None",
+            },
+        ]);
+        return lobbyEmbed;
     }
 }
