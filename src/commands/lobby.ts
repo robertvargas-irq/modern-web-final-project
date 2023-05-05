@@ -1,6 +1,7 @@
-import { ActionRowBuilder, ButtonBuilder, ButtonStyle } from "discord.js";
+import { ComponentType } from "discord.js";
 import GameManager from "../util/GameManager/GameManager.js";
 import { fetchMember } from "../util/MemberUtil/MemberFetch.js";
+import LobbyEmbed from "../util/Embeds/LobbyEmbed.js";
 
 const __lobby: InteractionHandlerPayloads.GuildChatInputCommand = {
     name: "start",
@@ -8,43 +9,67 @@ const __lobby: InteractionHandlerPayloads.GuildChatInputCommand = {
 
     async execute(interaction) {
         const gameManager = new GameManager(interaction);
+        const lobbyEmbed = new LobbyEmbed(gameManager.players);
 
-        //test add player
-        gameManager.players.addPlayer(
-            await fetchMember(interaction.guildId, interaction.member.id),
-            interaction.member
-        );
+        console.log("A lobby has been created");
 
-        // get the lobby emebed
-        const embed = gameManager.LobbyEmbed();
+        // create and display the lobby emebed
+        const { embeds: embed, components: actionRow } =
+            lobbyEmbed.CreateEmbed();
 
-        // creates the join, leave and start now buttons
-        const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
-            new ButtonBuilder()
-                .setCustomId("join-game")
-                .setLabel("Join")
-                .setStyle(ButtonStyle.Success),
-
-            new ButtonBuilder()
-                .setCustomId("leave-game")
-                .setLabel("Leave")
-                .setStyle(ButtonStyle.Danger),
-
-            new ButtonBuilder()
-                .setCustomId("start-game")
-                .setLabel("Start Now")
-                .setStyle(ButtonStyle.Primary)
-        );
-
-        await interaction.reply({
+        const message = await interaction.reply({
             embeds: [embed],
             components: [actionRow],
+        });
+
+        const collector = message.createMessageComponentCollector({
+            filter: (i) => i.user.id === interaction.user.id,
+            componentType: ComponentType.Button,
+            time: 120_000,
+        });
+
+        // collector that responds to the buttons
+        collector.on("collect", async (i) => {
+            if (i.customId === "join-game") {
+                // add player if not already in the lobby
+                if (!gameManager.players.getPlayer(interaction.member.id)) {
+                    gameManager.players.addPlayer(
+                        await fetchMember(
+                            interaction.guildId,
+                            interaction.member.id
+                        ),
+                        interaction.member
+                    );
+                    // update lobby player list
+                    const { embeds: updatePlayers } = lobbyEmbed.CreateEmbed();
+                    interaction.editReply({ embeds: [updatePlayers] });
+                }
+                console.log(`Added player ${interaction.member.displayName}`);
+                await i.deferUpdate();
+            }
+
+            if (i.customId === "leave-game") {
+                // remove player if in the lobby
+                if (gameManager.players.getPlayer(interaction.member.id)) {
+                    gameManager.players.removePlayer(interaction.member.id);
+                    // update lobby player list
+                    const { embeds: updatePlayers } = lobbyEmbed.CreateEmbed();
+                    interaction.editReply({ embeds: [updatePlayers] });
+                }
+                console.log(`Removed player ${interaction.member.displayName}`);
+                await i.deferUpdate();
+            }
+
+            if (i.customId === "start-game") {
+                gameManager.start();
+                await i.deferUpdate();
+            }
         });
 
         // starts game in two minutes
         setTimeout(async () => {
             await gameManager.start();
-        }, 10 * 1000);
+        }, 120 * 1000);
     },
 };
 
