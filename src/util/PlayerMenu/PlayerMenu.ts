@@ -25,8 +25,10 @@ const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(
         .setStyle(ButtonStyle.Success)
 );
 
-const catHoldingCard = "https://media.discordapp.net/attachments/1090471775768428627/1099094479903928330/bpt24i98nsp41.jpg?width=554&height=543";
-const catBeingCardDisposal = "https://media.discordapp.net/attachments/1090471775768428627/1099093963991961630/8IBKHtg0E484QKeXMPx4vyxD1czPK_ZzFtTQlMxm_c8.jpg?width=407&height=543";
+const catHoldingCard =
+    "https://media.discordapp.net/attachments/1090471775768428627/1099094479903928330/bpt24i98nsp41.jpg?width=554&height=543";
+const catBeingCardDisposal =
+    "https://media.discordapp.net/attachments/1090471775768428627/1099093963991961630/8IBKHtg0E484QKeXMPx4vyxD1czPK_ZzFtTQlMxm_c8.jpg?width=407&height=543";
 /**
  * Wrapper for Player Menus
  */
@@ -64,9 +66,7 @@ export default class PlayerMenu {
             )
             .setColor(0x32cd32)
             .setThumbnail(this.interaction.user.displayAvatarURL())
-            .setImage(
-                catHoldingCard
-            )
+            .setImage(catHoldingCard)
             .setTimestamp()
             .addFields([
                 {
@@ -85,9 +85,7 @@ export default class PlayerMenu {
         if (this.player.stay) {
             embed
                 .setFields([])
-                .setImage(
-                    catBeingCardDisposal
-                )
+                .setImage(catBeingCardDisposal)
                 .setDescription(
                     `You have chosen to stay! \n\nWaiting for other players now! \n\nGood luck ${this.player.member.displayName}`
                 );
@@ -99,9 +97,7 @@ export default class PlayerMenu {
                 .setDescription(
                     `You have been forced to stay with the hand you had because you took too long to choose. \n\nGood luck ${this.player.member.displayName}`
                 )
-                .setImage(
-                    catBeingCardDisposal
-                );
+                .setImage(catBeingCardDisposal);
         }
 
         return [embed];
@@ -143,11 +139,13 @@ export default class PlayerMenu {
 
             if (i.customId === "stay") {
                 this.player.stay = true;
-                console.log(`Player ${this.player.member.displayName} has stayed`);
+                console.log(
+                    `Player ${this.player.member.displayName} has stayed`
+                );
                 this.render(true);
                 return;
-            } 
-            
+            }
+
             console.log(`Player ${this.player.member.displayName} has hit`);
 
             this.render();
@@ -159,7 +157,9 @@ export default class PlayerMenu {
                 this.player.stay = true;
                 this.forceStay = true;
                 this.render(true);
-                console.log(`Player ${this.player.member.displayName} has taken too long to make a choice and was timed out.`);
+                console.log(
+                    `Player ${this.player.member.displayName} has taken too long to make a choice and was timed out.`
+                );
             }
             console.log(`Collected ${collected.size} interactions`);
         });
