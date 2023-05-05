@@ -25,6 +25,8 @@ const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(
         .setStyle(ButtonStyle.Success)
 );
 
+const catHoldingCard = "https://media.discordapp.net/attachments/1090471775768428627/1099094479903928330/bpt24i98nsp41.jpg?width=554&height=543";
+const catBeingCardDisposal = "https://media.discordapp.net/attachments/1090471775768428627/1099093963991961630/8IBKHtg0E484QKeXMPx4vyxD1czPK_ZzFtTQlMxm_c8.jpg?width=407&height=543";
 /**
  * Wrapper for Player Menus
  */
@@ -32,7 +34,7 @@ export default class PlayerMenu {
     private message?: Message;
     private interaction: RepliableInteraction;
     private player: Player;
-    private testForceStay: boolean;
+    private forceStay: boolean;
 
     /**
      * Creates a new PlayerMenu
@@ -42,7 +44,7 @@ export default class PlayerMenu {
     constructor(interaction: RepliableInteraction, player: Player) {
         this.interaction = interaction;
         this.player = player;
-        this.testForceStay = false;
+        this.forceStay = false;
     }
 
     /**
@@ -63,7 +65,7 @@ export default class PlayerMenu {
             .setColor(0x32cd32)
             .setThumbnail(this.interaction.user.displayAvatarURL())
             .setImage(
-                "https://media.discordapp.net/attachments/1090471775768428627/1099094479903928330/bpt24i98nsp41.jpg?width=554&height=543"
+                catHoldingCard
             )
             .setTimestamp()
             .addFields([
@@ -84,21 +86,21 @@ export default class PlayerMenu {
             embed
                 .setFields([])
                 .setImage(
-                    "https://media.discordapp.net/attachments/1090471775768428627/1099093963991961630/8IBKHtg0E484QKeXMPx4vyxD1czPK_ZzFtTQlMxm_c8.jpg?width=407&height=543"
+                    catBeingCardDisposal
                 )
                 .setDescription(
                     `You have chosen to stay! \n\nWaiting for other players now! \n\nGood luck ${this.player.member.displayName}`
                 );
         }
 
-        if (this.testForceStay) {
+        if (this.forceStay) {
             embed
                 .setFields([])
                 .setDescription(
                     `You have been forced to stay with the hand you had because you took too long to choose. \n\nGood luck ${this.player.member.displayName}`
                 )
                 .setImage(
-                    "https://media.discordapp.net/attachments/1090471775768428627/1099093963991961630/8IBKHtg0E484QKeXMPx4vyxD1czPK_ZzFtTQlMxm_c8.jpg?width=407&height=543"
+                    catBeingCardDisposal
                 );
         }
 
@@ -124,7 +126,7 @@ export default class PlayerMenu {
     private initCollector() {
         if (!this.message) {
             throw new Error(
-                "PlayerMenu error: Did not generate message correctly"
+                "PlayerMenu error: initCollector was not able to properly initialize the message property. Variable 'message' is left undefined."
             );
         }
 
@@ -141,12 +143,12 @@ export default class PlayerMenu {
 
             if (i.customId === "stay") {
                 this.player.stay = true;
-                console.log("We stayed in ur mom");
+                console.log(`Player ${this.player.member.displayName} has stayed`);
                 this.render(true);
                 return;
-            } else {
-                console.log("We hit your mom");
-            }
+            } 
+            
+            console.log(`Player ${this.player.member.displayName} has hit`);
 
             this.render();
         });
@@ -155,9 +157,9 @@ export default class PlayerMenu {
         collector.on("end", (collected) => {
             if (collector.endReason === "time") {
                 this.player.stay = true;
-                this.testForceStay = true;
+                this.forceStay = true;
                 this.render(true);
-                console.log("You timed out!");
+                console.log(`Player ${this.player.member.displayName} has taken too long to make a choice and was timed out.`);
             }
             console.log(`Collected ${collected.size} interactions`);
         });
