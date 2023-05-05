@@ -7,23 +7,12 @@ import {
     Message,
     ComponentBuilder,
     RepliableInteraction,
+    ActionRow,
 } from "discord.js";
 
 import { fetchUser } from "../UserUtil/UserFetch.js";
 import { Player } from "../Player/Player.js";
-/**
- * Buttons constant just creates the current buttons for hit and stay.
- */
-const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(
-    new ButtonBuilder()
-        .setCustomId("stay")
-        .setLabel("Stay")
-        .setStyle(ButtonStyle.Danger),
-    new ButtonBuilder()
-        .setCustomId("hit")
-        .setLabel("Hit")
-        .setStyle(ButtonStyle.Success)
-);
+import InteractiveMenu from "../InteractiveMenu/InteractiveMenu.js";
 
 const catHoldingCard =
     "https://media.discordapp.net/attachments/1090471775768428627/1099094479903928330/bpt24i98nsp41.jpg?width=554&height=543";
@@ -32,9 +21,7 @@ const catBeingCardDisposal =
 /**
  * Wrapper for Player Menus
  */
-export default class PlayerMenu {
-    private message?: Message;
-    private interaction: RepliableInteraction;
+export default class PlayerMenu extends InteractiveMenu {
     private player: Player;
     private forceStay: boolean;
 
@@ -44,7 +31,7 @@ export default class PlayerMenu {
      * @param player This is a player object to be able to access stuff within player.
      */
     constructor(interaction: RepliableInteraction, player: Player) {
-        this.interaction = interaction;
+        super(interaction);
         this.player = player;
         this.forceStay = false;
     }
@@ -53,7 +40,7 @@ export default class PlayerMenu {
      * This will create embeds that will be displayed on the user side
      * @returns embeds for generateMessagePayload
      */
-    private generateEmbeds() {
+    protected generateEmbeds(): [EmbedBuilder] {
         //The intial embed
         const embed = new EmbedBuilder()
             .setTitle("Welcome to BlackJack bot")
@@ -61,8 +48,9 @@ export default class PlayerMenu {
                 `Welcome ${
                     this.player.member.displayName
                 } to your BlackJack game!\n
-                 You will force stay <t:${Math.floor(Date.now() / 1000 + 10)}:R>
-                `
+                 You will force stay <t:${Math.floor(
+                     Date.now() / 1000 + 10
+                 )}:R>`
             )
             .setColor(0x32cd32)
             .setThumbnail(this.interaction.user.displayAvatarURL())
@@ -103,15 +91,48 @@ export default class PlayerMenu {
         return [embed];
     }
 
+    protected generateComponents(): [ActionRowBuilder<ButtonBuilder>] {
+        /**
+         * Buttons constant just creates the current buttons for hit and stay.
+         */
+        const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(
+            new ButtonBuilder()
+                .setCustomId("stay")
+                .setLabel("Stay")
+                .setStyle(ButtonStyle.Danger),
+            new ButtonBuilder()
+                .setCustomId("hit")
+                .setLabel("Hit")
+                .setStyle(ButtonStyle.Success)
+        );
+
+        if (this.player.stay) {
+            buttons.setComponents(
+                new ButtonBuilder()
+                    .setCustomId("stay")
+                    .setLabel("Stay")
+                    .setStyle(ButtonStyle.Danger)
+                    .setDisabled(true),
+                new ButtonBuilder()
+                    .setCustomId("hit")
+                    .setLabel("Hit")
+                    .setStyle(ButtonStyle.Success)
+                    .setDisabled(true)
+            );
+        }
+
+        return [buttons];
+    }
+
     /**
      * This will create the message to display to the play
      * @param hideButtons This is to konw if we are hiding the buttons, only will happen if player stays
      * @returns The object to display with the reply.
      */
-    private generateMessagePayload(hideButtons: boolean) {
+    protected generateMessagePayload() {
         return {
             embeds: this.generateEmbeds(),
-            components: hideButtons ? [] : [buttons],
+            components: this.generateComponents(),
             ephemeral: true,
         };
     }
@@ -119,7 +140,7 @@ export default class PlayerMenu {
     /**
      * This function will intiialize the collector and reply depending on the buttons pressed.
      */
-    private initCollector() {
+    protected initCollector() {
         if (!this.message) {
             throw new Error(
                 "PlayerMenu error: initCollector was not able to properly initialize the message property. Variable 'message' is left undefined."
@@ -142,7 +163,7 @@ export default class PlayerMenu {
                 console.log(
                     `Player ${this.player.member.displayName} has stayed`
                 );
-                this.render(true);
+                this.render();
                 return;
             }
 
@@ -156,7 +177,7 @@ export default class PlayerMenu {
             if (collector.endReason === "time") {
                 this.player.stay = true;
                 this.forceStay = true;
-                this.render(true);
+                this.render();
                 console.log(
                     `Player ${this.player.member.displayName} has taken too long to make a choice and was timed out.`
                 );
@@ -170,18 +191,18 @@ export default class PlayerMenu {
      * @param hideButtons Checks for hiding buttons, off by default since we start with all buttons available
      * @returns Once the interaction has not be replied to
      */
-    async render(hideButtons: boolean = false) {
+    async render() {
         //Intitial Render
         if (!this.interaction.replied) {
             this.generateEmbeds();
             this.message = await this.interaction.reply({
-                ...this.generateMessagePayload(hideButtons),
+                ...this.generateMessagePayload(),
                 fetchReply: true,
             });
             this.initCollector();
             return;
         }
 
-        this.interaction.editReply(this.generateMessagePayload(hideButtons));
+        this.interaction.editReply(this.generateMessagePayload());
     }
 }
