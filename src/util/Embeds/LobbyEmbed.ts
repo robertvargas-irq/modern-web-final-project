@@ -6,6 +6,9 @@ import {
 } from "discord.js";
 import PlayerManager from "../Player/PlayerManager.js";
 
+const LOBBY_IMAGE_URL =
+    "https://cdn.discordapp.com/attachments/1098006998429216824/1103403070399987823/istockphoto-915871752-612x612.jpg";
+
 export default class LobbyEmbed {
     startTime: number;
     players: PlayerManager;
@@ -15,19 +18,18 @@ export default class LobbyEmbed {
         this.players = players;
     }
 
-    CreateEmbed(disableButtons: boolean = false) {
+    createMessagePayload(disableButtons: boolean = false) {
         const lobbyEmbed = new EmbedBuilder()
             .setTitle("Lobby")
             .setDescription(`The game will start <t:${this.startTime}:R>`)
-            .setImage(
-                "https://cdn.discordapp.com/attachments/1098006998429216824/1103403070399987823/istockphoto-915871752-612x612.jpg"
-            )
+            .setImage(LOBBY_IMAGE_URL)
+            .setColor("#3494fa")
             .setTimestamp(Date.now());
 
         const playerList = this.players
             .getAllPlayers()
             .map((player) => player.member.displayName)
-            .join(", ");
+            .join("\n");
 
         lobbyEmbed.addFields([
             {
@@ -57,6 +59,6 @@ export default class LobbyEmbed {
                 .setDisabled(disableButtons)
         );
 
-        return { embeds: lobbyEmbed, components: actionRow };
+        return { embeds: [lobbyEmbed], components: [actionRow] };
     }
 }

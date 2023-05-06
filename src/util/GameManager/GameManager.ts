@@ -52,13 +52,13 @@ export default class GameManager {
         // update lobby embed to say the game has started and disable the buttons
         const lobbyEmbed = new LobbyEmbed(this.players);
         const { embeds: lobby, components: actionRow } =
-            lobbyEmbed.CreateEmbed(true);
+            lobbyEmbed.createMessagePayload(true);
 
-        lobby.setDescription("The Game Has Started!");
+        lobby[0].setDescription("The Game Has Started!");
 
         this.interaction.editReply({
-            embeds: [lobby],
-            components: [actionRow],
+            embeds: lobby,
+            components: actionRow,
         });
 
         // error if the game is empty
