@@ -1,7 +1,7 @@
-import { EmbedBuilder, Message } from "discord.js";
 import CardDeck from "../Cards/CardDeck.js";
 import PlayerManager from "../Player/PlayerManager.js";
 import Dealer from "./Dealer.js";
+import LobbyEmbed from "../Embeds/LobbyEmbed.js";
 
 /**
  * Number of card decks to be mixed into
@@ -49,11 +49,17 @@ export default class GameManager {
      * Start the game.
      */
     start() {
-        // update lobby embed to say the game has started
-        const newDescription = this.LobbyEmbed().setDescription(
-            "The Game Has Started!"
-        );
-        this.interaction.editReply({ embeds: [newDescription] });
+        // update lobby embed to say the game has started and disable the buttons
+        const lobbyEmbed = new LobbyEmbed(this.players);
+        const { embeds: lobby, components: actionRow } =
+            lobbyEmbed.createMessagePayload(true);
+
+        lobby[0].setDescription("The Game Has Started!");
+
+        this.interaction.editReply({
+            embeds: lobby,
+            components: actionRow,
+        });
 
         // error if the game is empty
         if (this.players.isEmpty) {
@@ -62,37 +68,17 @@ export default class GameManager {
             );
         }
 
+        console.log(
+            `A game has started!\nPlayers: ${this.players
+                .getAllPlayers()
+                .map((player) => player.member.displayName)
+                .join(", ")}`
+        );
+
         // advance gamestate
         this.advanceGameState();
 
         // begin game loop
         // ! IMPLEMENT ME
-    }
-
-    LobbyEmbed() {
-        const lobbyEmbed = new EmbedBuilder()
-            .setTitle("Lobby")
-            .setDescription(
-                `The game will start <t:${Math.floor(
-                    Date.now() / 1000 + 10
-                )}:R>`
-            )
-            .setImage(
-                "https://cdn.discordapp.com/attachments/1098006998429216824/1103403070399987823/istockphoto-915871752-612x612.jpg"
-            )
-            .setTimestamp(Date.now());
-
-        const playerList = this.players
-            .getAllPlayers()
-            .map((player) => player.member.displayName)
-            .join(", ");
-
-        lobbyEmbed.addFields([
-            {
-                name: "Players:",
-                value: playerList || "None",
-            },
-        ]);
-        return lobbyEmbed;
     }
 }
