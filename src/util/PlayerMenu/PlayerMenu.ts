@@ -4,13 +4,9 @@ import {
     ButtonBuilder,
     ButtonStyle,
     ActionRowBuilder,
-    Message,
-    ComponentBuilder,
     RepliableInteraction,
-    ActionRow,
 } from "discord.js";
 
-import { fetchUser } from "../UserUtil/UserFetch.js";
 import { Player } from "../Player/Player.js";
 import InteractiveMenu from "../InteractiveMenu/InteractiveMenu.js";
 
@@ -29,11 +25,17 @@ export default class PlayerMenu extends InteractiveMenu {
      * Creates a new PlayerMenu
      * @param interaction This is the interaction from the command to be able to reply
      * @param player This is a player object to be able to access stuff within player.
+     * @param hide This happens if the programmer wants to hide this embed
      */
-    constructor(interaction: RepliableInteraction, player: Player) {
+    constructor(
+        interaction: RepliableInteraction,
+        player: Player,
+        hide: boolean
+    ) {
         super(interaction);
         this.player = player;
         this.forceStay = false;
+        this.hideEmbed = hide;
     }
 
     /**
@@ -91,6 +93,10 @@ export default class PlayerMenu extends InteractiveMenu {
         return [embed];
     }
 
+    /**
+     * Creates the components for the embed
+     * @returns A row of components for the embed
+     */
     protected generateComponents(): [ActionRowBuilder<ButtonBuilder>] {
         /**
          * Buttons constant just creates the current buttons for hit and stay.
@@ -122,19 +128,6 @@ export default class PlayerMenu extends InteractiveMenu {
         }
 
         return [buttons];
-    }
-
-    /**
-     * This will create the message to display to the play
-     * @param hideButtons This is to konw if we are hiding the buttons, only will happen if player stays
-     * @returns The object to display with the reply.
-     */
-    protected generateMessagePayload() {
-        return {
-            embeds: this.generateEmbeds(),
-            components: this.generateComponents(),
-            ephemeral: true,
-        };
     }
 
     /**

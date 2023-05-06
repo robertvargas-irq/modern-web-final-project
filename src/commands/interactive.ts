@@ -11,7 +11,8 @@ const __interactive: InteractionHandlerPayloads.GuildChatInputCommand = {
             new Player(
                 await fetchMember(interaction.guildId, interaction.user.id),
                 interaction.member
-            )
+            ),
+            true
         );
         menu.render();
     },
