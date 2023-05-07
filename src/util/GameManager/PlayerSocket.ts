@@ -1,6 +1,4 @@
-import { Player } from "../Player/Player.js";
-import PlayerManager from "../Player/PlayerManager.js";
-import { PlayerMenuAction } from "../PlayerMenu/PlayerMenu.js";
+import { Player, PlayerAction } from "../Player/Player.js";
 import GameManager, { GameManagerActions } from "./GameManager.js";
 
 /**
@@ -19,7 +17,7 @@ export default class PlayerSocket {
      * Emit an action to the GameManager from the Player.
      * @param action Player action performed.
      */
-    playerEmit(action: PlayerMenuAction) {
+    playerEmit(action: PlayerAction) {
         switch (action) {
             case "hit": {
                 // request a new card for the player
