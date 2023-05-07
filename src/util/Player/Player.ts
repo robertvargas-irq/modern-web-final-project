@@ -1,6 +1,7 @@
 import { ButtonInteraction, GuildMember } from "discord.js";
 import { MemberDocument } from "../../models/MemberModel.js";
 import CardHand from "../Cards/CardHand.js";
+import PlayerMenu from "../PlayerMenu/PlayerMenu.js";
 
 type PlayerState = "playing" | "loss" | "stay" | "force-stay";
 
@@ -12,6 +13,7 @@ export class Player {
     public member: GuildMember;
     public state: PlayerState;
     public cards: CardHand;
+    private menu?: PlayerMenu;
 
     /**
      * Creates a new Player instance.
@@ -33,6 +35,10 @@ export class Player {
         return this.state === "stay" || this.state === "force-stay";
     }
 
+    get id() {
+        return this.member.id;
+    }
+
     /**
      * Resets stay, loss and cards for player
      */
@@ -42,9 +48,22 @@ export class Player {
     }
 
     /**
+     * Force a player into staying.
+     * - Terminates the player's menu.
+     */
+    forceStay() {
+        this.state = "force-stay";
+        if (this.menu) this.menu.terminate("time");
+    }
+
+    /**
      * Open a player's PlayerMenu on a given interaction.
-     * -
      * @param interaction Interaction that prompted the menu open.
      */
-    openPlayerMenu(interaction: ButtonInteraction) {}
+    openPlayerMenu(interaction: ButtonInteraction) {
+        // terminate previous menu if defined
+        if (this.menu) {
+            this.menu.terminate();
+        }
+    }
 }
