@@ -105,8 +105,8 @@ export default class GameManager {
                     embeds: [
                         new EmbedBuilder({
                             color: Colors.Aqua,
-                            title: "Debug",
-                            description: `Game will end ${time(
+                            title: "🎴 BlackJack",
+                            description: `Game will auto-stay all ${time(
                                 Math.floor(this.roundEndMs / 1_000),
                                 TimestampStyles.RelativeTime
                             )}`,
