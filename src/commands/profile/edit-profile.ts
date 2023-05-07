@@ -1,4 +1,5 @@
-import { fetchUser, userModal } from "../../util/UserUtil/index.js";
+import { fetchMember } from "../../util/MemberUtil/MemberFetch.js";
+import { memberModal } from "../../util/MemberUtil/MemberModal.js";
 
 const ModalTime = 240_000;
 
@@ -7,10 +8,13 @@ const __profile: InteractionHandlerPayloads.GuildChatInputCommand = {
     description: "Edit your user profile!",
     async execute(interaction) {
         // fetch user profile
-        const user = await fetchUser(interaction.user.id);
+        const member = await fetchMember(
+            interaction.guild.id,
+            interaction.user.id
+        );
 
         // generate modal and display
-        const modal = userModal(user);
+        const modal = memberModal(member);
         interaction.showModal(modal);
 
         // await results and collect
@@ -29,10 +33,10 @@ const __profile: InteractionHandlerPayloads.GuildChatInputCommand = {
             // update info
             const name = submission.fields.getTextInputValue("name");
             const bio = submission.fields.getTextInputValue("bio");
-            user.displayName = name;
-            user.bio = bio;
+            member.displayName = name;
+            member.bio = bio;
 
-            await user.save();
+            await member.save();
 
             console.log(
                 `User ${interaction.user.username} profile updated in db.`
