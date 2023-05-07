@@ -2,6 +2,8 @@ import { ButtonInteraction, GuildMember } from "discord.js";
 import { MemberDocument } from "../../models/MemberModel.js";
 import CardHand from "../Cards/CardHand.js";
 import PlayerMenu from "../PlayerMenu/PlayerMenu.js";
+import PlayerSocket from "../GameManager/PlayerSocket.js";
+import GameManager from "../GameManager/GameManager.js";
 
 type PlayerState = "playing" | "loss" | "stay" | "force-stay";
 
@@ -9,11 +11,12 @@ type PlayerState = "playing" | "loss" | "stay" | "force-stay";
  * Wrapper for players in-game.
  */
 export class Player {
-    public memberDoc: MemberDocument;
-    public member: GuildMember;
+    public readonly memberDoc: MemberDocument;
+    public readonly member: GuildMember;
+    public readonly cards: CardHand;
     public state: PlayerState;
-    public cards: CardHand;
     private menu?: PlayerMenu;
+    private socket?: PlayerSocket;
 
     /**
      * Creates a new Player instance.
@@ -57,13 +60,37 @@ export class Player {
     }
 
     /**
+     * Connect to a game via PlayerSocket.
+     * @param gameManager Game to connect to.
+     */
+    connect(gameManager: GameManager) {
+        this.socket = new PlayerSocket(gameManager, this);
+    }
+
+    /**
      * Open a player's PlayerMenu on a given interaction.
      * @param interaction Interaction that prompted the menu open.
      */
     openPlayerMenu(interaction: ButtonInteraction) {
+        // error if not connected to the game
+        if (!this.socket)
+            throw new Error(
+                "Player error: Not connected to the game via PlayerSocket."
+            );
+
         // terminate previous menu if defined
         if (this.menu) {
-            this.menu.terminate();
+            this.menu.terminate("override");
         }
+
+        // create a new menu and open it
+        this.menu = new PlayerMenu(
+            interaction,
+            this,
+            this.socket.requestTime()
+        );
+
+        // open the menu
+        return this.menu.render();
     }
 }
