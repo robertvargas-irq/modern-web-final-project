@@ -15,6 +15,10 @@ export default class PlayerSocket {
         this.p = player;
     }
 
+    /**
+     * Emit an action to the GameManager from the Player.
+     * @param action Player action performed.
+     */
     playerEmit(action: PlayerMenuAction) {
         switch (action) {
             case "hit": {
@@ -30,6 +34,10 @@ export default class PlayerSocket {
         }
     }
 
+    /**
+     * Emit an action to the Player from the GameManager.
+     * @param action Game action performed.
+     */
     gameEmit(action: GameManagerActions) {
         switch (action) {
             case "force-stay": {
