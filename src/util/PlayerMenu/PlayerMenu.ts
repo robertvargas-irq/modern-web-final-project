@@ -178,24 +178,4 @@ export default class PlayerMenu extends InteractiveMenu {
             console.log(`Collected ${collected.size} interactions`);
         });
     }
-
-    /**
-     * This function will do all the rendering of the messages
-     * @param hideButtons Checks for hiding buttons, off by default since we start with all buttons available
-     * @returns Once the interaction has not be replied to
-     */
-    async render() {
-        //Intitial Render
-        if (!this.interaction.replied) {
-            this.generateEmbeds();
-            this.message = await this.interaction.reply({
-                ...this.generateMessagePayload(),
-                fetchReply: true,
-            });
-            this.initCollector();
-            return;
-        }
-
-        this.interaction.editReply(this.generateMessagePayload());
-    }
 }
