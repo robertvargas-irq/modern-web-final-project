@@ -125,6 +125,7 @@ export default class PlayerMenu extends InteractiveMenu {
                         "Oh no! Unfortunately, you have gone over 21, and have lost the game."
                     );
                 break;
+            // inform the player of a loss (cards < dealer cards)
             case "loss":
                 embed
                     .setTitle("🔻 Loss")
@@ -144,6 +145,27 @@ export default class PlayerMenu extends InteractiveMenu {
                     ])
                     .setDescription(
                         "It appears the house has won. Unfortunately, points must be deducted for this."
+                    );
+                break;
+            // inform the player of a tie against the house
+            case "tie":
+                embed
+                    .setTitle("🟰 Hmm...")
+                    .setColor(Colors.Orange)
+                    .setFields([
+                        {
+                            name: "↔️ Points Gained",
+                            value: "> `0`",
+                            inline: true,
+                        },
+                        {
+                            name: "❇️ Current Wins",
+                            value: `> ${this.player.memberDoc.wins}`,
+                            inline: true,
+                        },
+                    ])
+                    .setDescription(
+                        "Looks like you've tied with the house. Fortunately, you don't lose anything, but unfortunately you don't win anything either."
                     );
                 break;
             // inform the player of their win
