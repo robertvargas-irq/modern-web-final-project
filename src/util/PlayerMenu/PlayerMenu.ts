@@ -118,6 +118,7 @@ export default class PlayerMenu extends InteractiveMenu {
                     .setDescription(
                         "Oh no! Unfortunately, you have gone over 21, and have lost the game."
                     );
+                break;
             case "loss":
                 embed
                     .setFields([
@@ -135,6 +136,7 @@ export default class PlayerMenu extends InteractiveMenu {
                     .setDescription(
                         "It appears the house has won. Unfortunately, points must be deducted for this."
                     );
+                break;
             // inform the player of their win
             case "win":
                 embed
@@ -153,6 +155,7 @@ export default class PlayerMenu extends InteractiveMenu {
                     .setDescription(
                         "Hooray! You've beat the house, and have gained some points for your bravery!"
                     );
+                break;
         }
 
         return [embed];
@@ -244,6 +247,11 @@ export default class PlayerMenu extends InteractiveMenu {
                     content: `${e}`,
                 });
                 return;
+            }
+
+            // end the collectors if the player has lost
+            if (this.player.lost) {
+                this.terminate("loss");
             }
 
             // re-render the menu
