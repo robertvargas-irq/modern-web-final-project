@@ -7,11 +7,9 @@ import GameManager from "../GameManager/GameManager.js";
 import { CalculatePoints, MemberPointsMinimum } from "./PlayerPoints.js";
 
 export type PlayerState = "playing" | "stay" | "force-stay" | GameOverStates;
+type WinStates = "win" | "black-jack";
 type LossStates = "loss" | "bust";
-
-const WinStatesArray = ["win", "black-jack", "dealt-black-jack"] as const;
-type WinStates = (typeof WinStatesArray)[number];
-export type GameOverStates = WinStates | "tie" | LossStates;
+export type GameOverStates = "tie" | WinStates | LossStates;
 export type PlayerAction = "hit" | "stay";
 
 /**
@@ -48,7 +46,7 @@ export class Player {
      * Check if the player has won.
      */
     get won() {
-        return WinStatesArray.some((s) => this.state === s);
+        return this.state === "win" || this.state === "black-jack";
     }
 
     /**
