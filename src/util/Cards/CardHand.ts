@@ -42,9 +42,10 @@ export default class CardHand {
         this.cards.push(card);
         this.totalValue += Math.min(10, card.rank + 1);
 
-        // increment the number of aces present
+        // increment the number of aces present + add missing 10 points for ace
         if (card.rank === 0) {
             this.acesPresent++;
+            this.totalValue += 10;
         }
 
         // if a bust, check if salvagable with an ace
