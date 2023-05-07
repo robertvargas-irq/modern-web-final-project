@@ -1,8 +1,7 @@
 import CardDeck from "../Cards/CardDeck.js";
 import PlayerManager from "../Player/PlayerManager.js";
-import Dealer from "./Dealer.js";
-import LobbyEmbed from "../Embeds/LobbyEmbed.js";
 import InitGameLobby from "./GameLobby.js";
+import Dealer from "./Dealer.js";
 import {
     ActionRowBuilder,
     ButtonBuilder,
@@ -26,16 +25,22 @@ const GameStates = ["waiting", "players", "dealer", "end"] as const;
  */
 const GamePlayerTimeMs = 60_000;
 
+/**
+ * The minimum hand value a dealer must have
+ * before staying.
+ */
+const DealerMin = 17;
+
 export type GameManagerActions = "force-stay";
 
 export default class GameManager {
     private readonly dealer: Dealer;
     private readonly deck: CardDeck;
-    private roundEndMs: number;
-    private state: number;
     public readonly interaction: GuildInteractions.ChatInput;
     public readonly channel: GuildTextBasedChannel;
     public readonly players: PlayerManager;
+    private roundEndMs: number;
+    private state: number;
 
     /**
      * Create a new instance of GameManager.
@@ -146,7 +151,10 @@ export default class GameManager {
                 break;
             }
             case "dealer": {
-                // handle dealer draw logic
+                // dealer draws until the minimum stated value
+                while (this.dealer.cards.value < DealerMin) {
+                    this.dealer.cards.add(this.deck.pullRandomCard());
+                }
                 break;
             }
             case "end": {
@@ -169,6 +177,11 @@ export default class GameManager {
 
         // add a new card to the player's hand
         player.cards.add(this.deck.pullRandomCard());
+
+        // if they bust, mark as bust
+        if (player.cards.bust) {
+            player.loss("bust");
+        }
     }
 
     /**
