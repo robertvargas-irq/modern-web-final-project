@@ -1,3 +1,7 @@
+import { CardData } from "./CardData.js";
+import CardHand from "./CardHand.js";
+import CardVisual from "./CardVisual.js";
+
 /**
  * Card image URLs.
  */
@@ -25,9 +29,10 @@ const FaceCards = ["Jack", "Queen", "King"] as const;
 /**
  * Card suits in play.
  */
-const Suits = ["Diamonds", "Clubs", "Hearts", "Spades"] as const;
-export type SuitTypes = (typeof Suits)[number];
-export const SuitCount = Suits.length;
+const SuitNames = ["Diamonds", "Clubs", "Hearts", "Spades"] as const;
+export type SuitTypes = (typeof SuitNames)[number];
+export const SuitCount = SuitNames.length;
+const SuitEmojis = ["♦️", "♣️", "♥️", "♠️"];
 
 /**
  * Card ranks in play.
@@ -64,4 +69,26 @@ export const GetRankName = (rank: number) => {
  * Get the string representation of the suit.
  * @param suit Card suit.
  */
-export const GetSuitName = (suit: number) => Suits[suit];
+export const GetSuitName = (suit: number) => SuitNames[suit];
+
+/**
+ * Get the emoji representation of the suit.
+ * @param suit Card suit.
+ */
+export const GetSuitEmoji = (suit: number) => SuitEmojis[suit];
+
+/**
+ * Format a set of cards visually as a string.
+ * @param cards Cards to represent visually.
+ * @returns String of cards with their rank and suit names
+ * separated by newlines.
+ */
+export function formatCardsAsString(cards: CardVisual[]) {
+    return cards.length > 0
+        ? cards
+              .map(
+                  (c) => `${c.suitEmoji} \`${c.rankName}\` of **${c.suitName}**`
+              )
+              .join("\n")
+        : "No cards available.";
+}
