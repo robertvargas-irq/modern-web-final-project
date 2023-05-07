@@ -107,3 +107,6 @@ dist
 src/commands/test/**/*
 src/commands/tests/**/*
 src/commands/**/*.test.ts
+
+# Raspberry Pi Shell Command
+start.sh
