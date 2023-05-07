@@ -286,11 +286,8 @@ export default class GameManager {
      * Deal all players their starting cards.
      */
     dealStartingCards() {
-        for (const { win, cards, id: pId } of this.players.getPlayerIter()) {
+        for (const { id: pId } of this.players.getPlayerIter()) {
             this.dealCard(pId, 2);
-            if (cards.blackjack) {
-                win("dealt-black-jack");
-            }
         }
     }
 
