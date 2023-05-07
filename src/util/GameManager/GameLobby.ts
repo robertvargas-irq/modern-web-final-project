@@ -69,7 +69,18 @@ export default async function InitGameLobby(gameManager: GameManager) {
     collector.on("end", () => {
         // start game if waiting
         if (gameManager.currentState === "waiting") {
-            gameManager.start();
+            // if game is empty, inform and stop
+            if (gameManager.players.isEmpty) {
+                embeds[0]
+                    .setFields([])
+                    .setColor(Colors.NotQuiteBlack)
+                    .setDescription("> It appears no one has joined :(");
+                message.edit({
+                    embeds,
+                    components: [],
+                });
+                return;
+            }
 
             // update lobby embed to say the game has started and disable the buttons
             embeds[0]
@@ -80,6 +91,9 @@ export default async function InitGameLobby(gameManager: GameManager) {
                 embeds,
                 components: [],
             });
+
+            // start the game
+            gameManager.start();
         }
     });
 }
