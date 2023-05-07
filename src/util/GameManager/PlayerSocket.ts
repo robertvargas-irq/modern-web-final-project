@@ -8,8 +8,8 @@ import GameManager, { GameManagerActions } from "./GameManager.js";
  * a player and a game.
  */
 export default class PlayerSocket {
-    private g: GameManager;
-    private p: Player;
+    private readonly g: GameManager;
+    private readonly p: Player;
     constructor(gameManager: GameManager, player: Player) {
         this.g = gameManager;
         this.p = player;
@@ -32,6 +32,13 @@ export default class PlayerSocket {
                 break;
             }
         }
+    }
+
+    /**
+     * Get the time remaining in the play phase.
+     */
+    requestTime() {
+        return this.g.timeRemaining;
     }
 
     /**
