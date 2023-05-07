@@ -1,6 +1,7 @@
 import { GuildMember } from "discord.js";
 import { Player } from "./Player.js";
 import { MemberDocument } from "../../models/MemberModel.js";
+import GameManager from "../GameManager/GameManager.js";
 
 type UserId = string;
 
@@ -11,13 +12,19 @@ export default class PlayerManager {
     /**
      * Joined players mapped by their Discord user id.
      */
-    private players: Map<UserId, Player>;
+    private readonly players: Map<UserId, Player>;
+    /**
+     * Reference back to the GameManager.
+     */
+    private readonly gameManager: GameManager;
 
     /**
      * Creates a new instance of PlayerManager.
+     * @param gameManager The game this player manager is connected to.
      */
-    constructor() {
+    constructor(gameManager: GameManager) {
         this.players = new Map();
+        this.gameManager = gameManager;
     }
 
     /**
@@ -42,6 +49,9 @@ export default class PlayerManager {
 
         // creates instance of player
         const player = new Player(UserDB, member);
+
+        // connect the player to the game
+        player.connect(this.gameManager);
 
         // adds player instance to map with its corresponding id
         this.players.set(member.user.id, player);
