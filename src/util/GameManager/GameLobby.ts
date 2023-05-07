@@ -25,38 +25,38 @@ export default async function InitGameLobby(gameManager: GameManager) {
         });
 
     // collector that responds to the buttons
-    collector.on("collect", async (i) => {
+    collector.on("collect", async (i: GuildInteractions.Button) => {
         await i.deferUpdate();
 
         if (i.customId === "join-game") {
             // add player if not already in the lobby
-            if (gameManager.players.playerExists(interaction.member.id)) {
+            if (gameManager.players.playerExists(i.member.id)) {
                 return;
             }
 
             gameManager.players.addPlayer(
-                await fetchMember(interaction.guildId, interaction.member.id),
-                interaction.member
+                await fetchMember(i.guildId, i.member.id),
+                i.member
             );
             // update lobby player list
             const { embeds: updatePlayers } = lobbyEmbed.createMessagePayload();
-            interaction.editReply({ embeds: updatePlayers });
+            i.editReply({ embeds: updatePlayers });
 
-            console.log(`Added player ${interaction.member.displayName}`);
+            console.log(`Added player ${i.member.displayName}`);
         }
 
         if (i.customId === "leave-game") {
             // remove player if in the lobby
-            if (!gameManager.players.playerExists(interaction.member.id)) {
+            if (!gameManager.players.playerExists(i.member.id)) {
                 return;
             }
 
-            gameManager.players.removePlayer(interaction.member.id);
+            gameManager.players.removePlayer(i.member.id);
             // update lobby player list
             const { embeds: updatePlayers } = lobbyEmbed.createMessagePayload();
-            interaction.editReply({ embeds: updatePlayers });
+            i.editReply({ embeds: updatePlayers });
 
-            console.log(`Removed player ${interaction.member.displayName}`);
+            console.log(`Removed player ${i.member.displayName}`);
         }
 
         // end the collector to start the game if the host presses it
