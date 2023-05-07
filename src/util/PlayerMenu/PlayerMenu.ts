@@ -28,12 +28,10 @@ export default class PlayerMenu extends InteractiveMenu {
      * @param interaction This is the interaction from the command to be able to reply
      * @param player This is a player object to be able to access stuff within player.
      */
-    constructor(
-        interaction: RepliableInteraction,
-        player: Player,
-        options: InteractiveMenuOptionsPartial = {}
-    ) {
-        super(interaction, options);
+    constructor(interaction: RepliableInteraction, player: Player) {
+        super(interaction, {
+            ephemeral: true,
+        });
         this.player = player;
     }
 
