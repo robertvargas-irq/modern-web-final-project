@@ -198,6 +198,17 @@ export default class GameManager {
     }
 
     /**
+     * Advance the game if all players are ready.
+     */
+    private advanceToDealerIfReady() {
+        // check if any players are left
+        if (this.players.allReady) {
+            // proceed after 5 seconds to give a buffer time
+            this.collector?.resetTimer({ time: 5_000 });
+        }
+    }
+
+    /**
      * Deal a card to a given player from the deck.
      * @param playerId The player to deal to.
      */
@@ -211,6 +222,7 @@ export default class GameManager {
         // if they bust, mark as bust
         if (player.cards.bust) {
             player.loss("bust");
+            this.advanceToDealerIfReady();
         }
     }
 
@@ -221,12 +233,7 @@ export default class GameManager {
     stayPlayer(playerId: string) {
         // set a player's stay status
         this.players.setStay(playerId);
-
-        // check if any players are left
-        if (this.players.allReady) {
-            // proceed after 5 seconds to give a buffer time
-            this.collector?.resetTimer({ time: 5_000 });
-        }
+        this.advanceToDealerIfReady();
     }
 
     /**
