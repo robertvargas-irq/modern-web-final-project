@@ -153,26 +153,35 @@ export default class PlayerMenu extends InteractiveMenu {
 
         // handle button presses for hit and stay
         collector.on("collect", (i) => {
-            i.deferUpdate();
+            try {
+                i.deferUpdate();
 
-            // route to proper action
-            switch (i.customId) {
-                case "stay": {
-                    // request the game manager to have the player stay
-                    this.player.request("stay");
-                    console.log(
-                        `Player ${this.player.member.displayName} has stayed`
-                    );
-                    break;
+                // route to proper action
+                switch (i.customId) {
+                    case "stay": {
+                        // request the game manager to have the player stay
+                        this.player.request("stay");
+                        console.log(
+                            `Player ${this.player.member.displayName} has stayed`
+                        );
+                        break;
+                    }
+                    case "hit": {
+                        // request the game manager to deal a card
+                        this.player.request("hit");
+                        console.log(
+                            `Player ${this.player.member.displayName} has hit`
+                        );
+                        break;
+                    }
                 }
-                case "hit": {
-                    // request the game manager to deal a card
-                    this.player.request("hit");
-                    console.log(
-                        `Player ${this.player.member.displayName} has hit`
-                    );
-                    break;
-                }
+            } catch (e) {
+                // report error and skip re-render
+                this.interaction.followUp({
+                    ephemeral: true,
+                    content: `${e}`,
+                });
+                return;
             }
 
             // re-render the menu
