@@ -8,34 +8,33 @@ import {
 } from "discord.js";
 
 import { Player } from "../Player/Player.js";
-import InteractiveMenu from "../InteractiveMenu/InteractiveMenu.js";
+import InteractiveMenu, {
+    InteractiveMenuOptionsPartial,
+} from "../InteractiveMenu/InteractiveMenu.js";
 
 const catHoldingCard =
     "https://media.discordapp.net/attachments/1090471775768428627/1099094479903928330/bpt24i98nsp41.jpg?width=554&height=543";
 const catBeingCardDisposal =
     "https://media.discordapp.net/attachments/1090471775768428627/1099093963991961630/8IBKHtg0E484QKeXMPx4vyxD1czPK_ZzFtTQlMxm_c8.jpg?width=407&height=543";
+
 /**
  * Wrapper for Player Menus
  */
 export default class PlayerMenu extends InteractiveMenu {
     private player: Player;
-    private forceStay: boolean;
 
     /**
      * Creates a new PlayerMenu
      * @param interaction This is the interaction from the command to be able to reply
      * @param player This is a player object to be able to access stuff within player.
-     * @param hide This happens if the programmer wants to hide this embed
      */
     constructor(
         interaction: RepliableInteraction,
         player: Player,
-        hide: boolean
+        options: InteractiveMenuOptionsPartial = {}
     ) {
-        super(interaction);
+        super(interaction, options);
         this.player = player;
-        this.forceStay = false;
-        this.hideEmbed = hide;
     }
 
     /**
@@ -71,23 +70,25 @@ export default class PlayerMenu extends InteractiveMenu {
                 },
             ]);
 
-        //If the player stays, we are going to remove the buttons and Give them a message to wait patiently
-        if (this.player.stay) {
-            embed
-                .setFields([])
-                .setImage(catBeingCardDisposal)
-                .setDescription(
-                    `You have chosen to stay! \n\nWaiting for other players now! \n\nGood luck ${this.player.member.displayName}`
-                );
-        }
-
-        if (this.forceStay) {
-            embed
-                .setFields([])
-                .setDescription(
-                    `You have been forced to stay with the hand you had because you took too long to choose. \n\nGood luck ${this.player.member.displayName}`
-                )
-                .setImage(catBeingCardDisposal);
+        switch (this.player.state) {
+            // if the player stays, we are going to remove the buttons and give them a message to wait patiently.
+            case "stay":
+                embed
+                    .setFields([])
+                    .setImage(catBeingCardDisposal)
+                    .setDescription(
+                        `You have chosen to stay! \n\nWaiting for other players now! \n\nGood luck ${this.player.member.displayName}`
+                    );
+                break;
+            // inform the player if they were forced to stay
+            case "force-stay":
+                embed
+                    .setFields([])
+                    .setDescription(
+                        `You have been forced to stay with the hand you had because you took too long to choose. \n\nGood luck ${this.player.member.displayName}`
+                    )
+                    .setImage(catBeingCardDisposal);
+                break;
         }
 
         return [embed];
@@ -112,7 +113,7 @@ export default class PlayerMenu extends InteractiveMenu {
                 .setStyle(ButtonStyle.Success)
         );
 
-        if (this.player.stay) {
+        if (this.player.staying) {
             buttons.setComponents(
                 new ButtonBuilder()
                     .setCustomId("stay")
@@ -152,7 +153,8 @@ export default class PlayerMenu extends InteractiveMenu {
             i.deferUpdate();
 
             if (i.customId === "stay") {
-                this.player.stay = true;
+                // ! TODO: Prompt the GameManager to stay the player.
+                // this.player.stay = true;
                 console.log(
                     `Player ${this.player.member.displayName} has stayed`
                 );
@@ -165,11 +167,10 @@ export default class PlayerMenu extends InteractiveMenu {
             this.render();
         });
 
-        //At this point the timer has run out for the buttons
+        // handle collector end
         collector.on("end", (collected) => {
-            if (!this.player.stay && collector.endReason === "time") {
-                this.player.stay = true;
-                this.forceStay = true;
+            // if time has run out and the player is not staying, re-render the menu
+            if (!this.player.staying && collector.endReason === "time") {
                 this.render();
                 console.log(
                     `Player ${this.player.member.displayName} has taken too long to make a choice and was timed out.`
