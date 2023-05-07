@@ -15,7 +15,7 @@ export default {
         client.user.setPresence({
             activities: [
                 {
-                    name: "ALPHA | Hi!",
+                    name: "v1.0 | Hi!",
                     type: ActivityType.Listening,
                 },
             ],

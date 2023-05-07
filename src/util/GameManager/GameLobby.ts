@@ -21,7 +21,6 @@ export default async function InitGameLobby(gameManager: GameManager) {
 
     const collector =
         message.createMessageComponentCollector<ComponentType.Button>({
-            filter: (i) => i.user.id === interaction.user.id,
             time: CollectionTime,
         });
 
@@ -31,7 +30,7 @@ export default async function InitGameLobby(gameManager: GameManager) {
 
         if (i.customId === "join-game") {
             // add player if not already in the lobby
-            if (gameManager.players.getPlayer(interaction.member.id)) {
+            if (gameManager.players.playerExists(interaction.member.id)) {
                 return;
             }
 
@@ -48,7 +47,7 @@ export default async function InitGameLobby(gameManager: GameManager) {
 
         if (i.customId === "leave-game") {
             // remove player if in the lobby
-            if (!gameManager.players.getPlayer(interaction.member.id)) {
+            if (!gameManager.players.playerExists(interaction.member.id)) {
                 return;
             }
 
@@ -60,8 +59,8 @@ export default async function InitGameLobby(gameManager: GameManager) {
             console.log(`Removed player ${interaction.member.displayName}`);
         }
 
-        // end the collector to start the game
-        if (i.customId === "start-game") {
+        // end the collector to start the game if the host presses it
+        if (i.customId === "start-game" && i.user.id === interaction.user.id) {
             collector.stop();
         }
     });
