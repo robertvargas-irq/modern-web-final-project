@@ -12,7 +12,7 @@ const __interactive: InteractionHandlerPayloads.GuildChatInputCommand = {
                 await fetchMember(interaction.guildId, interaction.user.id),
                 interaction.member
             ),
-            true
+            60_000
         );
         menu.render();
     },
