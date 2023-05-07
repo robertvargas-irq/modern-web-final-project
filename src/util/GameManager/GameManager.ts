@@ -2,6 +2,7 @@ import CardDeck from "../Cards/CardDeck.js";
 import PlayerManager from "../Player/PlayerManager.js";
 import Dealer from "./Dealer.js";
 import LobbyEmbed from "../Embeds/LobbyEmbed.js";
+import InitGameLobby from "./GameLobby.js";
 
 /**
  * Number of card decks to be mixed into
@@ -13,11 +14,11 @@ const GameStates = ["waiting", "players", "dealer", "end"] as const;
 export type GameManagerActions = "force-stay";
 
 export default class GameManager {
-    private readonly interaction: GuildInteractions.ChatInput;
     private readonly dealer: Dealer;
     private readonly deck: CardDeck;
     private roundEnd: number;
     private state: number;
+    public readonly interaction: GuildInteractions.ChatInput;
     public readonly players: PlayerManager;
 
     /**
@@ -71,6 +72,21 @@ export default class GameManager {
      */
     stayPlayer(playerId: string) {
         return this.players.setStay(playerId);
+    }
+
+    /**
+     * Initialize the lobby for players to join.
+     */
+    initLobby() {
+        // error if game is already in progress
+        if (this.currentState !== "waiting") {
+            throw new Error(
+                "GameManager error: Cannot initialize lobby when the game is in progress!"
+            );
+        }
+
+        // open a new lobby
+        return InitGameLobby(this);
     }
 
     /**
