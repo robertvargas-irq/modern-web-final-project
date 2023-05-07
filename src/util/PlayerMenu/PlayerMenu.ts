@@ -167,7 +167,7 @@ export default class PlayerMenu extends InteractiveMenu {
             // inform the player of a tie against the house
             case "tie":
                 embed
-                    .setTitle("🟰 Hmm...")
+                    .setTitle("🔹 Hmm...")
                     .setColor(Colors.Orange)
                     .setFields([
                         {
