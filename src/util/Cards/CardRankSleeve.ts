@@ -79,7 +79,7 @@ export default class CardRankSleeve {
 
         // remove from the deck and resolve into a usable card
         this.remove(suit);
-        return new CardVisual(CardData(this.rank, suit));
+        return CardData(this.rank, suit);
     }
 
     /**
