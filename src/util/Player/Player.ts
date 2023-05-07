@@ -33,6 +33,14 @@ export class Player {
     }
 
     /**
+     * Check if the player has lost.
+     * - True if the current player state is "bust" or "loss".
+     */
+    get lost() {
+        return this.state === "bust" || this.state === "loss";
+    }
+
+    /**
      * Check if the player is currently staying.
      * - True if the current player state is "stay" or "force-stay".
      */
@@ -40,6 +48,9 @@ export class Player {
         return this.state === "stay" || this.state === "force-stay";
     }
 
+    /**
+     * Get the player's id.
+     */
     get id() {
         return this.member.id;
     }
