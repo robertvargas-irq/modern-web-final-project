@@ -131,7 +131,7 @@ export default class PlayerManager {
                     digest.loss.push(player);
                     break;
                 case "bust":
-                    digest.loss.push(player);
+                    digest.bust.push(player);
                     break;
                 case "tie":
                     digest.tie.push(player);
