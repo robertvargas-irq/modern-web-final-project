@@ -70,6 +70,15 @@ export default class PlayerMenu extends InteractiveMenu {
                     value: "If you stay, you will stick with the hand that you've got until all players have stayed.",
                     inline: true,
                 },
+                {
+                    name: `Cards: ${this.player.cards.value} Total Value / 21`,
+                    value: !this.player.cards.empty
+                        ? this.player.cards
+                              .resolveAll()
+                              .map((c) => `→ ${c.rankName} of ${c.suitName}`)
+                              .join("\n")
+                        : "No cards currently held.",
+                },
             ]);
 
         switch (this.player.state) {
