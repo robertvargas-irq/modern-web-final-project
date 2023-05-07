@@ -240,30 +240,8 @@ export default class PlayerMenu extends InteractiveMenu {
                             inline: true,
                         },
                     ])
-                    .setDescription("Congratulations! You've reached 21!");
-                break;
-            case "dealt-black-jack":
-                embed
-                    .setTitle("🎴 Dealt a BlackJack hand!")
-                    .setColor(Colors.Fuchsia)
-                    .setImage(catDancing)
-                    .setFields([
-                        {
-                            name: "⏫ Points Gained",
-                            value: `> \`${CalculatePoints(
-                                this.player.state,
-                                this.player.cards.value
-                            )}\``,
-                            inline: true,
-                        },
-                        {
-                            name: "❇️ Total Wins",
-                            value: `> \`${this.player.memberDoc.wins}\``,
-                            inline: true,
-                        },
-                    ])
                     .setDescription(
-                        "Looks like the house goofed, you've been dealt a winning hand!"
+                        "Congratulations! You've reached 21!\nYou have also received extra points as a result."
                     );
                 break;
         }
