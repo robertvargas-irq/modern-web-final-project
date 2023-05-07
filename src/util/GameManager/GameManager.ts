@@ -112,7 +112,7 @@ export default class GameManager {
                             )}`,
                             fields: [
                                 {
-                                    name: `🃏 Dealer's Cards: ${this.dealer.cards.value} Total Value / 21`,
+                                    name: `__🃏 Dealer's Cards: ${this.dealer.cards.value} Total Value / 21__`,
                                     value:
                                         ">>> " +
                                         formatCardsAsString(
@@ -245,7 +245,7 @@ export default class GameManager {
                                     inline: true,
                                 },
                                 {
-                                    name: `🃏 Dealer's Cards: ${this.dealer.cards.value} Total Value / 21`,
+                                    name: `__🃏 Dealer's Cards: ${this.dealer.cards.value} Total Value / 21__`,
                                     value:
                                         ">>> " +
                                         formatCardsAsString(
