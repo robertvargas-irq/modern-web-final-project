@@ -19,6 +19,20 @@ const catFaceDown = "https://i.imgflip.com/cxfv0.jpg?a467544";
 const catDancing = "https://media.tenor.com/uJOLBspTDLoAAAAd/cat-dance.gif";
 
 /**
+ * Buttons constant just creates the current buttons for hit and stay.
+ */
+const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(
+    new ButtonBuilder()
+        .setCustomId("stay")
+        .setLabel("Stay")
+        .setStyle(ButtonStyle.Danger),
+    new ButtonBuilder()
+        .setCustomId("hit")
+        .setLabel("Hit")
+        .setStyle(ButtonStyle.Success)
+);
+
+/**
  * Wrapper for Player Menus
  */
 export default class PlayerMenu extends InteractiveMenu {
@@ -144,7 +158,7 @@ export default class PlayerMenu extends InteractiveMenu {
                         },
                     ])
                     .setDescription(
-                        "It appears the house has won. Unfortunately, points must be deducted for this."
+                        "It appears you've taken an :regional_indicator_l: this time around partner. Let's do another round and get you those points back!"
                     );
                 break;
             // inform the player of a tie against the house
@@ -200,33 +214,9 @@ export default class PlayerMenu extends InteractiveMenu {
      * @returns A row of components for the embed
      */
     protected generateComponents() {
-        /**
-         * Buttons constant just creates the current buttons for hit and stay.
-         */
-        const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(
-            new ButtonBuilder()
-                .setCustomId("stay")
-                .setLabel("Stay")
-                .setStyle(ButtonStyle.Danger),
-            new ButtonBuilder()
-                .setCustomId("hit")
-                .setLabel("Hit")
-                .setStyle(ButtonStyle.Success)
-        );
-
-        if (this.player.staying) {
-            buttons.setComponents(
-                new ButtonBuilder()
-                    .setCustomId("stay")
-                    .setLabel("Stay")
-                    .setStyle(ButtonStyle.Danger)
-                    .setDisabled(true),
-                new ButtonBuilder()
-                    .setCustomId("hit")
-                    .setLabel("Hit")
-                    .setStyle(ButtonStyle.Success)
-                    .setDisabled(true)
-            );
+        // empty if no longer playing
+        if (!this.player.playing) {
+            return [];
         }
 
         return [buttons];
@@ -293,15 +283,9 @@ export default class PlayerMenu extends InteractiveMenu {
         });
 
         // handle collector end
-        collector.on("end", (collected) => {
-            // if time has run out and the player is not staying, re-render the menu
-            if (!this.player.staying && collector.endReason === "time") {
-                this.render();
-                console.log(
-                    `Player ${this.player.member.displayName} has taken too long to make a choice and was timed out.`
-                );
-            }
-            console.log(`Collected ${collected.size} interactions`);
+        collector.on("end", () => {
+            // re-render the menu to show the final results
+            this.render();
         });
     }
 }
