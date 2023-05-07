@@ -49,8 +49,11 @@ export default class CardDeck {
      * @returns Resolved Card.
      */
     public pullRandomCard() {
-        // null if empty
-        if (this.empty) return null;
+        // error if empty
+        if (this.empty)
+            throw new Error(
+                "CardDeck error: The deck is currently empty. Unable to pull a random card."
+            );
 
         // get from a random rank sleeve
         const startRank = Math.floor(Math.random() * CardRanks);
@@ -69,6 +72,9 @@ export default class CardDeck {
             return card;
         }
 
-        return null;
+        // error if empty
+        throw new Error(
+            "CardDeck error: The deck is currently empty. Unable to pull a random card."
+        );
     }
 }
