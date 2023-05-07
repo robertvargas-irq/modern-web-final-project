@@ -13,11 +13,12 @@ const GameStates = ["waiting", "players", "dealer", "end"] as const;
 export type GameManagerActions = "force-stay";
 
 export default class GameManager {
-    private interaction: GuildInteractions.ChatInput;
-    private dealer: Dealer;
-    private deck: CardDeck;
+    private readonly interaction: GuildInteractions.ChatInput;
+    private readonly dealer: Dealer;
+    private readonly deck: CardDeck;
+    private roundEnd: number;
     private state: number;
-    public players: PlayerManager;
+    public readonly players: PlayerManager;
 
     /**
      * Create a new instance of GameManager.
@@ -25,10 +26,11 @@ export default class GameManager {
      */
     constructor(interaction: GuildInteractions.ChatInput) {
         this.interaction = interaction;
-        this.players = new PlayerManager();
+        this.players = new PlayerManager(this);
         this.dealer = new Dealer();
         this.deck = new CardDeck(CardDecks);
         this.state = 0;
+        this.roundEnd = 0;
     }
 
     /**
@@ -36,6 +38,10 @@ export default class GameManager {
      */
     get currentState() {
         return GameStates[this.state];
+    }
+
+    get timeRemaining() {
+        return Math.max(0, this.roundEnd - Date.now() / 1_000);
     }
 
     /**
