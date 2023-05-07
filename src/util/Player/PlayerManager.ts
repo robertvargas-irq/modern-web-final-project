@@ -112,6 +112,14 @@ export default class PlayerManager {
     }
 
     /**
+     * Get an iterator of all joined players.
+     * @returns Iterator of all current players.
+     */
+    getPlayerIter() {
+        return this.players.values();
+    }
+
+    /**
      * Get a digest of players' win states.
      * @returns Object of mapped players to each type of win-state.
      */
@@ -122,20 +130,24 @@ export default class PlayerManager {
             bust: [],
             tie: [],
         };
-        for (const player of this.players.values()) {
-            switch (player.state) {
-                case "win":
-                    digest.win.push(player);
-                    break;
-                case "loss":
-                    digest.loss.push(player);
-                    break;
-                case "bust":
-                    digest.bust.push(player);
-                    break;
-                case "tie":
-                    digest.tie.push(player);
-                    break;
+        for (const player of this.getPlayerIter()) {
+            // win state
+            if (player.won) {
+                digest.win.push(player);
+            }
+            // all others
+            else {
+                switch (player.state) {
+                    case "loss":
+                        digest.loss.push(player);
+                        break;
+                    case "bust":
+                        digest.bust.push(player);
+                        break;
+                    case "tie":
+                        digest.tie.push(player);
+                        break;
+                }
             }
         }
         return digest;
