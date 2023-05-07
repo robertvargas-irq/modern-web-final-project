@@ -6,18 +6,29 @@ import {
     RepliableInteraction,
 } from "discord.js";
 
+interface InteractiveMenuOptions {
+    ephemeral: boolean;
+}
+
+export type InteractiveMenuOptionsPartial = Partial<InteractiveMenuOptions>;
+
 export default abstract class InteractiveMenu {
     protected message?: Message;
     protected interaction: RepliableInteraction;
-    protected hideEmbed: boolean;
+    protected options: InteractiveMenuOptions;
 
     /**
      * Creates a new PlayerMenu
      * @param interaction This is the interaction from the command to be able to reply
      */
-    constructor(interaction: RepliableInteraction) {
+    constructor(
+        interaction: RepliableInteraction,
+        menuOptions: InteractiveMenuOptionsPartial
+    ) {
         this.interaction = interaction;
-        this.hideEmbed = false;
+        this.options = {
+            ephemeral: menuOptions.ephemeral ?? false,
+        };
     }
 
     /**
@@ -40,7 +51,7 @@ export default abstract class InteractiveMenu {
         return {
             embeds: this.generateEmbeds(),
             components: this.generateComponents(),
-            ephemeral: this.hideEmbed,
+            ephemeral: this.options.ephemeral,
         };
     }
 
