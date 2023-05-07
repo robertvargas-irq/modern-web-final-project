@@ -7,10 +7,8 @@ export function CalculatePoints(state: GameOverStates, handValue: number) {
     switch (state) {
         case "win":
             return handValue;
-        case "dealt-black-jack":
-            return Math.round(handValue * 1.5);
         case "black-jack":
-            return Math.round(handValue * 1.25);
+            return Math.round(handValue * 1.5);
         case "tie":
             return 0;
         case "loss":
