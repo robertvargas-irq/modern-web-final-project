@@ -70,6 +70,17 @@ export default class PlayerManager {
     }
 
     /**
+     * Check if the player is in the game.
+     * @param memberId Player id to check.
+     * @returns
+     * - True if in the game.
+     * - False if not in the game.
+     */
+    playerExists(memberId: string) {
+        return this.players.has(memberId);
+    }
+
+    /**
      * Remove a player from the manager.
      * @param memberId Player id to remove.
      * @returns
