@@ -5,6 +5,7 @@ import {
     ButtonStyle,
     ActionRowBuilder,
     RepliableInteraction,
+    Colors,
 } from "discord.js";
 
 import { Player } from "../Player/Player.js";
@@ -14,6 +15,8 @@ const catHoldingCard =
     "https://media.discordapp.net/attachments/1090471775768428627/1099094479903928330/bpt24i98nsp41.jpg?width=554&height=543";
 const catBeingCardDisposal =
     "https://media.discordapp.net/attachments/1090471775768428627/1099093963991961630/8IBKHtg0E484QKeXMPx4vyxD1czPK_ZzFtTQlMxm_c8.jpg?width=407&height=543";
+const catFaceDown = "https://i.imgflip.com/cxfv0.jpg?a467544";
+const catDancing = "https://media.tenor.com/uJOLBspTDLoAAAAd/cat-dance.gif";
 
 /**
  * Wrapper for Player Menus
@@ -103,6 +106,9 @@ export default class PlayerMenu extends InteractiveMenu {
             // inform the player of a bust (> 21)
             case "bust":
                 embed
+                    .setTitle("🚩 Bust.")
+                    .setColor(Colors.Red)
+                    .setImage(catFaceDown)
                     .setFields([
                         {
                             name: "⏬ Points Lost",
@@ -121,6 +127,9 @@ export default class PlayerMenu extends InteractiveMenu {
                 break;
             case "loss":
                 embed
+                    .setTitle("🔻 Loss")
+                    .setColor(Colors.Red)
+                    .setImage(catFaceDown)
                     .setFields([
                         {
                             name: "⏬ Points Lost",
@@ -140,6 +149,9 @@ export default class PlayerMenu extends InteractiveMenu {
             // inform the player of their win
             case "win":
                 embed
+                    .setTitle("🎉 Hooray!")
+                    .setColor(Colors.Gold)
+                    .setImage(catDancing)
                     .setFields([
                         {
                             name: "⏫ Points Gained",
