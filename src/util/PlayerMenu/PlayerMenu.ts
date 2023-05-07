@@ -167,7 +167,7 @@ export default class PlayerMenu extends InteractiveMenu {
 
         //At this point the timer has run out for the buttons
         collector.on("end", (collected) => {
-            if (collector.endReason === "time") {
+            if (!this.player.stay && collector.endReason === "time") {
                 this.player.stay = true;
                 this.forceStay = true;
                 this.render();
