@@ -5,10 +5,12 @@ import Dealer from "./Dealer.js";
 import {
     ActionRowBuilder,
     ButtonBuilder,
+    ButtonInteraction,
     ButtonStyle,
     ComponentType,
     EmbedBuilder,
     GuildTextBasedChannel,
+    InteractionCollector,
     TimestampStyles,
     time,
 } from "discord.js";
@@ -39,6 +41,7 @@ export default class GameManager {
     public readonly interaction: GuildInteractions.ChatInput;
     public readonly channel: GuildTextBasedChannel;
     public readonly players: PlayerManager;
+    private collector?: InteractionCollector<ButtonInteraction<"cached">>;
     private roundEndMs: number;
     private state: number;
 
@@ -117,7 +120,7 @@ export default class GameManager {
                 });
 
                 // init collector for game button
-                const collector =
+                this.collector =
                     message.createMessageComponentCollector<ComponentType.Button>(
                         {
                             filter: (i) => this.players.playerExists(i.user.id),
@@ -126,7 +129,7 @@ export default class GameManager {
                     );
 
                 // on message collect
-                collector.on("collect", async (collected) => {
+                this.collector.on("collect", async (collected) => {
                     const player = this.players.getPlayer(collected.user.id);
                     if (!player) {
                         console.log(
@@ -143,7 +146,7 @@ export default class GameManager {
                 // await the end of the collector
                 await new Promise<void>((res) => {
                     // resolve on collector end
-                    collector.on("end", () => {
+                    this.collector?.on("end", () => {
                         console.log("Game is now proceeding.");
                         res();
                     });
@@ -213,7 +216,13 @@ export default class GameManager {
      * @param playerId The player to stay.
      */
     stayPlayer(playerId: string) {
-        return this.players.setStay(playerId);
+        // set a player's stay status
+        this.players.setStay(playerId);
+
+        // check if any players are left
+        if (this.players.allReady) {
+            this.collector?.stop("early");
+        }
     }
 
     /**
