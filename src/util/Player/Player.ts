@@ -5,7 +5,13 @@ import PlayerMenu from "../PlayerMenu/PlayerMenu.js";
 import PlayerSocket from "../GameManager/PlayerSocket.js";
 import GameManager from "../GameManager/GameManager.js";
 
-type PlayerState = "playing" | "stay" | "force-stay" | "win" | LossStates;
+type PlayerState =
+    | "playing"
+    | "stay"
+    | "force-stay"
+    | "win"
+    | "tie"
+    | LossStates;
 type LossStates = "loss" | "bust";
 export type PlayerAction = "hit" | "stay";
 
@@ -109,6 +115,13 @@ export class Player {
         // increment losses and save
         this.memberDoc.losses++;
         return this.memberDoc.save();
+    }
+
+    /**
+     * Have the player marked as tied with the house.
+     */
+    tie() {
+        this.state = "tie";
     }
 
     /**
