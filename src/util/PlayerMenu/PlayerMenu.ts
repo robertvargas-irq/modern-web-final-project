@@ -15,8 +15,6 @@ const catHoldingCard =
 const catBeingCardDisposal =
     "https://media.discordapp.net/attachments/1090471775768428627/1099093963991961630/8IBKHtg0E484QKeXMPx4vyxD1czPK_ZzFtTQlMxm_c8.jpg?width=407&height=543";
 
-export type PlayerMenuAction = "hit" | "stay";
-
 /**
  * Wrapper for Player Menus
  */
@@ -153,22 +151,31 @@ export default class PlayerMenu extends InteractiveMenu {
             })
         );
 
-        //The responses once buttons are pressed
+        // handle button presses for hit and stay
         collector.on("collect", (i) => {
             i.deferUpdate();
 
-            if (i.customId === "stay") {
-                // ! TODO: Prompt the GameManager to stay the player.
-                // this.player.stay = true;
-                console.log(
-                    `Player ${this.player.member.displayName} has stayed`
-                );
-                this.render();
-                return;
+            // route to proper action
+            switch (i.customId) {
+                case "stay": {
+                    // request the game manager to have the player stay
+                    this.player.request("stay");
+                    console.log(
+                        `Player ${this.player.member.displayName} has stayed`
+                    );
+                    break;
+                }
+                case "hit": {
+                    // request the game manager to deal a card
+                    this.player.request("hit");
+                    console.log(
+                        `Player ${this.player.member.displayName} has hit`
+                    );
+                    break;
+                }
             }
 
-            console.log(`Player ${this.player.member.displayName} has hit`);
-
+            // re-render the menu
             this.render();
         });
 
