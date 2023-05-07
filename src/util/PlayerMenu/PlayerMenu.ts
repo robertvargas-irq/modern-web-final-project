@@ -138,7 +138,7 @@ export default class PlayerMenu extends InteractiveMenu {
                         },
                         {
                             name: "📛 Total Losses",
-                            value: `> ${this.player.memberDoc.losses}`,
+                            value: `> \`${this.player.memberDoc.losses}\``,
                             inline: true,
                         },
                     ])
@@ -163,7 +163,7 @@ export default class PlayerMenu extends InteractiveMenu {
                         },
                         {
                             name: "📛 Total Losses",
-                            value: `> ${this.player.memberDoc.losses}`,
+                            value: `> \`${this.player.memberDoc.losses}\``,
                             inline: true,
                         },
                     ])
@@ -187,7 +187,7 @@ export default class PlayerMenu extends InteractiveMenu {
                         },
                         {
                             name: "❇️ Current Wins",
-                            value: `> ${this.player.memberDoc.wins}`,
+                            value: `> \`${this.player.memberDoc.wins}\``,
                             inline: true,
                         },
                     ])
@@ -212,7 +212,7 @@ export default class PlayerMenu extends InteractiveMenu {
                         },
                         {
                             name: "❇️ Total Wins",
-                            value: `> ${this.player.memberDoc.wins}`,
+                            value: `> \`${this.player.memberDoc.wins}\``,
                             inline: true,
                         },
                     ])
@@ -236,7 +236,7 @@ export default class PlayerMenu extends InteractiveMenu {
                         },
                         {
                             name: "❇️ Total Wins",
-                            value: `> ${this.player.memberDoc.wins}`,
+                            value: `> \`${this.player.memberDoc.wins}\``,
                             inline: true,
                         },
                     ])
@@ -258,7 +258,7 @@ export default class PlayerMenu extends InteractiveMenu {
                         },
                         {
                             name: "❇️ Total Wins",
-                            value: `> ${this.player.memberDoc.wins}`,
+                            value: `> \`${this.player.memberDoc.wins}\``,
                             inline: true,
                         },
                     ])
