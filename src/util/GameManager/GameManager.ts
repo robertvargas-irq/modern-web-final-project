@@ -170,17 +170,20 @@ export default class GameManager {
                         player.cards.value > this.dealer.cards.value
                     ) {
                         player.win();
-                        continue;
                     }
 
                     // players who have less lose
-                    if (player.cards.value < this.dealer.cards.value) {
+                    else if (player.cards.value < this.dealer.cards.value) {
                         player.loss("loss");
-                        continue;
                     }
 
                     // players who break-even receive nothing in return
-                    player.tie();
+                    else {
+                        player.tie();
+                    }
+
+                    // terminate player menu early
+                    player.terminateMenu();
                 }
                 break;
             }
@@ -221,7 +224,8 @@ export default class GameManager {
 
         // check if any players are left
         if (this.players.allReady) {
-            this.collector?.stop("early");
+            // proceed after 5 seconds to give a buffer time
+            this.collector?.resetTimer({ time: 5_000 });
         }
     }
 
