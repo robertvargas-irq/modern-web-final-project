@@ -8,9 +8,7 @@ import {
 } from "discord.js";
 
 import { Player } from "../Player/Player.js";
-import InteractiveMenu, {
-    InteractiveMenuOptionsPartial,
-} from "../InteractiveMenu/InteractiveMenu.js";
+import InteractiveMenu from "../InteractiveMenu/InteractiveMenu.js";
 
 const catHoldingCard =
     "https://media.discordapp.net/attachments/1090471775768428627/1099094479903928330/bpt24i98nsp41.jpg?width=554&height=543";
@@ -22,17 +20,23 @@ const catBeingCardDisposal =
  */
 export default class PlayerMenu extends InteractiveMenu {
     private player: Player;
+    private collectionTime: number;
 
     /**
      * Creates a new PlayerMenu
      * @param interaction This is the interaction from the command to be able to reply
      * @param player This is a player object to be able to access stuff within player.
      */
-    constructor(interaction: RepliableInteraction, player: Player) {
+    constructor(
+        interaction: RepliableInteraction,
+        player: Player,
+        collectionTime: number
+    ) {
         super(interaction, {
             ephemeral: true,
         });
         this.player = player;
+        this.collectionTime = collectionTime;
     }
 
     /**
@@ -143,7 +147,7 @@ export default class PlayerMenu extends InteractiveMenu {
         const collector = this.message.createMessageComponentCollector({
             filter: (i) => i.user.id === this.interaction.user.id,
             componentType: ComponentType.Button,
-            time: 10_000,
+            time: this.collectionTime,
         });
 
         //The responses once buttons are pressed
