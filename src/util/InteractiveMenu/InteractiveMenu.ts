@@ -3,6 +3,7 @@ import {
     ButtonBuilder,
     EmbedBuilder,
     Message,
+    MessageActionRowComponentBuilder,
     RepliableInteraction,
 } from "discord.js";
 
@@ -27,6 +28,12 @@ export default abstract class InteractiveMenu {
     protected abstract generateEmbeds(): EmbedBuilder[];
 
     /**
+     * This will create components that will be displayed on the embed for the user
+     * @returns components for generateMessagePayload
+     */
+    protected abstract generateComponents(): ActionRowBuilder<MessageActionRowComponentBuilder>[];
+
+    /**
      * This will create the message to display to the play
      * @returns The object to display with the reply.
      */
@@ -42,12 +49,6 @@ export default abstract class InteractiveMenu {
      * This function will intiialize the collector and reply depending on the buttons pressed.
      */
     protected abstract initCollector(): void;
-
-    /**
-     * This will create components that will be displayed on the embed for the user
-     * @returns components for generateMessagePayload
-     */
-    protected abstract generateComponents(): ActionRowBuilder<ButtonBuilder>[];
 
     /**
      * This function will do all the rendering of the messages
