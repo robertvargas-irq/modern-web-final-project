@@ -39,6 +39,13 @@ export class Player {
     }
 
     /**
+     * Check if the player is currently playing.
+     */
+    get playing() {
+        return this.state === "playing";
+    }
+
+    /**
      * Check if the player has lost.
      * - True if the current player state is "bust" or "loss".
      */
