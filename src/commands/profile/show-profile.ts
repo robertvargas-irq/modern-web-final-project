@@ -1,4 +1,4 @@
-import { fetchUser } from "../util/UserUtil/index.js";
+import { fetchUser } from "../../util/UserUtil/index.js";
 import { EmbedBuilder } from "discord.js";
 
 const __showProfile: InteractionHandlerPayloads.GuildChatInputCommand = {

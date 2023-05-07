@@ -1,9 +1,9 @@
-import { fetchUser, userModal } from "../util/UserUtil/index.js";
+import { fetchUser, userModal } from "../../util/UserUtil/index.js";
 
 const ModalTime = 240_000;
 
 const __profile: InteractionHandlerPayloads.GuildChatInputCommand = {
-    name: "profile",
+    name: "edit-profile",
     description: "Edit your user profile!",
     async execute(interaction) {
         // fetch user profile

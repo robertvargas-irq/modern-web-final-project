@@ -1,6 +1,6 @@
-import { fetchMember } from "../util/MemberUtil/MemberFetch.js";
-import { Player } from "../util/Player/Player.js";
-import PlayerMenu from "../util/PlayerMenu/PlayerMenu.js";
+import { fetchMember } from "../../util/MemberUtil/MemberFetch.js";
+import { Player } from "../../util/Player/Player.js";
+import PlayerMenu from "../../util/PlayerMenu/PlayerMenu.js";
 
 const __interactive: InteractionHandlerPayloads.GuildChatInputCommand = {
     name: "interactive",

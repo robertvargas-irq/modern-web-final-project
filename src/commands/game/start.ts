@@ -1,7 +1,4 @@
-import { ComponentType } from "discord.js";
-import GameManager from "../util/GameManager/GameManager.js";
-import { fetchMember } from "../util/MemberUtil/MemberFetch.js";
-import LobbyEmbed from "../util/Embeds/LobbyEmbed.js";
+import GameManager from "../../util/GameManager/GameManager.js";
 
 const __lobby: InteractionHandlerPayloads.GuildChatInputCommand = {
     name: "start",
