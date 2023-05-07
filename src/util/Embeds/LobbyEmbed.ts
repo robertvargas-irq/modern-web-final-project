@@ -3,6 +3,8 @@ import {
     ButtonBuilder,
     ButtonStyle,
     EmbedBuilder,
+    TimestampStyles,
+    time,
 } from "discord.js";
 import PlayerManager from "../Player/PlayerManager.js";
 
@@ -20,23 +22,28 @@ export default class LobbyEmbed {
 
     createMessagePayload(disableButtons: boolean = false) {
         const lobbyEmbed = new EmbedBuilder()
-            .setTitle("Lobby")
-            .setDescription(`The game will start <t:${this.startTime}:R>`)
+            .setTitle("🛋️ BlackJack Lobby")
+            .setDescription(
+                "> Hello there, and welcome to **BlackJack**!" +
+                    "\n> Please use the buttons below to join the game, and host, you may start the game at any time!" +
+                    `\n> **The game will start ${time(
+                        this.startTime,
+                        TimestampStyles.RelativeTime
+                    )}.**`
+            )
             .setImage(LOBBY_IMAGE_URL)
             .setColor("#3494fa")
             .setTimestamp(Date.now());
 
         const playerList = this.players
             .getAllPlayers()
-            .map((player) => player.member.displayName)
+            .map((player) => `→ ${player.member.displayName}`)
             .join("\n");
 
-        lobbyEmbed.addFields([
-            {
-                name: "Players:",
-                value: playerList || "None",
-            },
-        ]);
+        lobbyEmbed.addFields({
+            name: "🎲 __Players__",
+            value: ">>> " + (playerList || "None yet."),
+        });
 
         // creates the join, leave and start now buttons
         const actionRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
