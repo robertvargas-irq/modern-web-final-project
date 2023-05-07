@@ -4,15 +4,14 @@ import CardHand from "../Cards/CardHand.js";
 import PlayerMenu from "../PlayerMenu/PlayerMenu.js";
 import PlayerSocket from "../GameManager/PlayerSocket.js";
 import GameManager from "../GameManager/GameManager.js";
+import { CalculatePoints, MemberPointsMinimum } from "./PlayerPoints.js";
 
-export type PlayerState =
-    | "playing"
-    | "stay"
-    | "force-stay"
-    | "win"
-    | "tie"
-    | LossStates;
+export type PlayerState = "playing" | "stay" | "force-stay" | GameOverStates;
 type LossStates = "loss" | "bust";
+
+const WinStatesArray = ["win", "black-jack", "dealt-black-jack"] as const;
+type WinStates = (typeof WinStatesArray)[number];
+export type GameOverStates = WinStates | "tie" | LossStates;
 export type PlayerAction = "hit" | "stay";
 
 /**
@@ -43,6 +42,13 @@ export class Player {
      */
     get playing() {
         return this.state === "playing";
+    }
+
+    /**
+     * Check if the player has won.
+     */
+    get won() {
+        return WinStatesArray.some((s) => this.state === s);
     }
 
     /**
@@ -91,10 +97,11 @@ export class Player {
      * @returns Promise for saving the member document
      * to the database.
      */
-    win() {
-        this.state = "win";
+    win(reason: WinStates) {
+        this.state = reason;
 
         // award points based on player's hand
+        this.memberDoc.points += CalculatePoints(reason, this.cards.value);
 
         // increment wins and save
         this.memberDoc.wins++;
@@ -109,15 +116,9 @@ export class Player {
      * to the database.
      */
     loss(reason: LossStates) {
+        // deduct points based on loss reason
         this.state = reason;
-        switch (reason) {
-            case "bust": {
-                break;
-            }
-            case "loss": {
-                break;
-            }
-        }
+        this.memberDoc.points += CalculatePoints(reason, this.cards.value);
 
         // increment losses and save
         this.memberDoc.losses++;
