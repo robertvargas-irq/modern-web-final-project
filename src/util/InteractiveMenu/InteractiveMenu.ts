@@ -1,6 +1,8 @@
 import {
     ActionRowBuilder,
+    CollectedMessageInteraction,
     EmbedBuilder,
+    InteractionCollector,
     Message,
     MessageActionRowComponentBuilder,
     RepliableInteraction,
@@ -16,6 +18,7 @@ export default abstract class InteractiveMenu {
     protected message?: Message;
     protected interaction: RepliableInteraction;
     protected options: InteractiveMenuOptions;
+    private collectors: InteractionCollector<CollectedMessageInteraction>[];
 
     /**
      * Creates a new PlayerMenu
@@ -29,6 +32,7 @@ export default abstract class InteractiveMenu {
         this.options = {
             ephemeral: menuOptions.ephemeral ?? false,
         };
+        this.collectors = [];
     }
 
     /**
@@ -58,7 +62,32 @@ export default abstract class InteractiveMenu {
     /**
      * This function will intiialize the collector and reply depending on the buttons pressed.
      */
-    protected abstract initCollector(): void;
+    protected abstract initCollectors(): void;
+
+    /**
+     * Register a message component collector.
+     * @param collector The collector to register.
+     */
+    protected registerCollector<T extends CollectedMessageInteraction>(
+        collector: InteractionCollector<T>
+    ) {
+        // workaround for multi-type
+        this.collectors.push(
+            collector as unknown as InteractionCollector<CollectedMessageInteraction>
+        );
+        return collector;
+    }
+
+    /**
+     * Terminate the menu, ending all collectors.
+     * @param reason Termination reason.
+     */
+    public terminate(reason: string = "No reason given.") {
+        for (const collector of this.collectors) {
+            if (collector.ended) continue;
+            collector.stop(reason);
+        }
+    }
 
     /**
      * This function will do all the rendering of the messages
@@ -72,7 +101,7 @@ export default abstract class InteractiveMenu {
                 ...this.generateMessagePayload(),
                 fetchReply: true,
             });
-            this.initCollector();
+            this.initCollectors();
             return;
         }
 
