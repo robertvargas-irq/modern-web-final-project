@@ -34,11 +34,18 @@ export default class PlayerManager {
      * @param member Discord member snowflake.
      */
     addPlayer(UserDB: MemberDocument, member: GuildMember) {
+        // if player already present, return existing
+        let existing;
+        if ((existing = this.getPlayer(member.id))) {
+            return existing;
+        }
+
         // creates instance of player
         const player = new Player(UserDB, member);
 
         // adds player instance to map with its corresponding id
         this.players.set(member.user.id, player);
+        return player;
     }
 
     /**
@@ -77,16 +84,20 @@ export default class PlayerManager {
      * - True if succesful.
      * - False if player does not exist.
      */
-    setStay(memberId: string, bool: boolean) {
+    setStay(memberId: string) {
         const player = this.players.get(memberId);
+        if (!player) return false;
 
-        //check if player exists
-        if (player) {
-            player.stay = bool;
-            return true;
-        } else {
-            return false;
-        }
+        player.state = "stay";
+        return true;
+    }
+
+    forceStay(memberId: string) {
+        const player = this.players.get(memberId);
+        if (!player) return false;
+
+        player.state = "force-stay";
+        return true;
     }
 
     /**
@@ -95,16 +106,12 @@ export default class PlayerManager {
      * - True if succesful.
      * - False if player does not exist.
      */
-    setLoss(memberId: string, bool: boolean) {
+    setLoss(memberId: string) {
         const player = this.players.get(memberId);
+        if (!player) return false;
 
-        //check if player exists
-        if (player) {
-            player.loss = bool;
-            return true;
-        } else {
-            return false;
-        }
+        player.state = "loss";
+        return true;
     }
 
     /**
