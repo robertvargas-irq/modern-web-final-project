@@ -3,6 +3,16 @@ import PlayerManager from "../Player/PlayerManager.js";
 import Dealer from "./Dealer.js";
 import LobbyEmbed from "../Embeds/LobbyEmbed.js";
 import InitGameLobby from "./GameLobby.js";
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    ComponentType,
+    EmbedBuilder,
+    GuildTextBasedChannel,
+    TimestampStyles,
+    time,
+} from "discord.js";
 
 /**
  * Number of card decks to be mixed into
@@ -11,14 +21,20 @@ import InitGameLobby from "./GameLobby.js";
 const CardDecks = 5;
 const GameStates = ["waiting", "players", "dealer", "end"] as const;
 
+/**
+ * How much time players have to play during the "players" phase.
+ */
+const GamePlayerTimeMs = 60_000;
+
 export type GameManagerActions = "force-stay";
 
 export default class GameManager {
     private readonly dealer: Dealer;
     private readonly deck: CardDeck;
-    private roundEnd: number;
+    private roundEndMs: number;
     private state: number;
     public readonly interaction: GuildInteractions.ChatInput;
+    public readonly channel: GuildTextBasedChannel;
     public readonly players: PlayerManager;
 
     /**
@@ -27,11 +43,12 @@ export default class GameManager {
      */
     constructor(interaction: GuildInteractions.ChatInput) {
         this.interaction = interaction;
+        this.channel = interaction.channel;
         this.players = new PlayerManager(this);
         this.dealer = new Dealer();
         this.deck = new CardDeck(CardDecks);
         this.state = 0;
-        this.roundEnd = 0;
+        this.roundEndMs = 0;
     }
 
     /**
@@ -42,16 +59,104 @@ export default class GameManager {
     }
 
     get timeRemaining() {
-        return Math.max(0, this.roundEnd - Date.now() / 1_000);
+        return Math.max(0, this.roundEndMs - Date.now());
     }
 
     /**
      * Advance to the next game state.
-     * - Loops around to the beginning if the final
-     *   state is passed.
      */
-    advanceGameState() {
-        this.state = (this.state + 1) % GameStates.length;
+    private advanceGameState() {
+        this.state++;
+    }
+
+    /**
+     * Perform game logic for the current state.
+     */
+    private async handleGameLogic() {
+        // game is over
+        if (this.state >= GameStates.length) return;
+
+        // route to proper logic
+        switch (this.currentState) {
+            case "waiting": {
+                // display the lobby menu to users
+                return this.initLobby();
+            }
+            case "players": {
+                // initialize round end time
+                this.roundEndMs = Date.now() + GamePlayerTimeMs;
+
+                // display a menu that prompts users to open their game menus
+                const message = await this.channel.send({
+                    embeds: [
+                        new EmbedBuilder({
+                            title: "Debug",
+                            description: `Game will end ${time(
+                                Math.floor(this.roundEndMs / 1_000),
+                                TimestampStyles.RelativeTime
+                            )}`,
+                        }),
+                    ],
+                    components: [
+                        new ActionRowBuilder<ButtonBuilder>({
+                            components: [
+                                new ButtonBuilder({
+                                    customId: "gm:open-player-menu",
+                                    style: ButtonStyle.Primary,
+                                    label: "Open Player Menu",
+                                    emoji: "🎮",
+                                }),
+                            ],
+                        }),
+                    ],
+                });
+
+                // init collector for game button
+                const collector =
+                    message.createMessageComponentCollector<ComponentType.Button>(
+                        {
+                            filter: (i) => this.players.playerExists(i.user.id),
+                            time: GamePlayerTimeMs,
+                        }
+                    );
+
+                // on message collect
+                collector.on("collect", async (collected) => {
+                    const player = this.players.getPlayer(collected.user.id);
+                    if (!player) {
+                        console.log(
+                            `Unable to locate player ${collected.user.tag}.`
+                        );
+                        return;
+                    }
+
+                    // open player menu for the player
+                    console.log({ collectedId: collected.id });
+                    return player.openPlayerMenu(collected);
+                });
+
+                // await the end of the collector
+                await new Promise<void>((res) => {
+                    // resolve on collector end
+                    collector.on("end", () => {
+                        console.log("Game is now proceeding.");
+                        res();
+                    });
+                });
+                break;
+            }
+            case "dealer": {
+                // handle dealer draw logic
+                break;
+            }
+            case "end": {
+                // based on dealer results, display
+            }
+        }
+
+        // advance to the next game state
+        this.advanceGameState();
+        this.handleGameLogic();
     }
 
     /**
@@ -94,15 +199,8 @@ export default class GameManager {
      */
     start() {
         // update lobby embed to say the game has started and disable the buttons
-        const lobbyEmbed = new LobbyEmbed(this.players);
-        const { embeds: lobby, components: actionRow } =
-            lobbyEmbed.createMessagePayload(true);
-
-        lobby[0].setDescription("The Game Has Started!");
-
         this.interaction.editReply({
-            embeds: lobby,
-            components: actionRow,
+            content: "The game has started!",
         });
 
         // error if the game is empty
@@ -119,10 +217,8 @@ export default class GameManager {
                 .join(", ")}`
         );
 
-        // advance gamestate
+        // advance gamestate and handle logic
         this.advanceGameState();
-
-        // begin game loop
-        // ! IMPLEMENT ME
+        this.handleGameLogic();
     }
 }
