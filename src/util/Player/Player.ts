@@ -6,6 +6,7 @@ import PlayerSocket from "../GameManager/PlayerSocket.js";
 import GameManager from "../GameManager/GameManager.js";
 
 type PlayerState = "playing" | "loss" | "stay" | "force-stay";
+export type PlayerAction = "hit" | "stay";
 
 /**
  * Wrapper for players in-game.
@@ -68,15 +69,22 @@ export class Player {
     }
 
     /**
+     * Request an action to be performed to the GameManager.
+     * @param action Action to request from the GameManager.
+     */
+    request(action: PlayerAction) {
+        if (!this.socket) throw new ConnectionError();
+
+        this.socket.playerEmit(action);
+    }
+
+    /**
      * Open a player's PlayerMenu on a given interaction.
      * @param interaction Interaction that prompted the menu open.
      */
     openPlayerMenu(interaction: ButtonInteraction) {
         // error if not connected to the game
-        if (!this.socket)
-            throw new Error(
-                "Player error: Not connected to the game via PlayerSocket."
-            );
+        if (!this.socket) throw new ConnectionError();
 
         // terminate previous menu if defined
         if (this.menu) {
@@ -92,5 +100,16 @@ export class Player {
 
         // open the menu
         return this.menu.render();
+    }
+}
+
+/**
+ * Helper error for connections.
+ */
+class ConnectionError extends Error {
+    constructor() {
+        super(
+            "Connection error: Player is not connected to the game via PlayerSocket."
+        );
     }
 }
