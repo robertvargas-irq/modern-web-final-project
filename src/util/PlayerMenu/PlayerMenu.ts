@@ -15,6 +15,8 @@ const catHoldingCard =
 const catBeingCardDisposal =
     "https://media.discordapp.net/attachments/1090471775768428627/1099093963991961630/8IBKHtg0E484QKeXMPx4vyxD1czPK_ZzFtTQlMxm_c8.jpg?width=407&height=543";
 
+export type PlayerMenuAction = "hit" | "stay";
+
 /**
  * Wrapper for Player Menus
  */
@@ -43,7 +45,7 @@ export default class PlayerMenu extends InteractiveMenu {
      * This will create embeds that will be displayed on the user side
      * @returns embeds for generateMessagePayload
      */
-    protected generateEmbeds(): [EmbedBuilder] {
+    protected generateEmbeds() {
         //The intial embed
         const embed = new EmbedBuilder()
             .setTitle("Welcome to BlackJack bot")
@@ -100,7 +102,7 @@ export default class PlayerMenu extends InteractiveMenu {
      * Creates the components for the embed
      * @returns A row of components for the embed
      */
-    protected generateComponents(): [ActionRowBuilder<ButtonBuilder>] {
+    protected generateComponents() {
         /**
          * Buttons constant just creates the current buttons for hit and stay.
          */
@@ -136,19 +138,20 @@ export default class PlayerMenu extends InteractiveMenu {
     /**
      * This function will intiialize the collector and reply depending on the buttons pressed.
      */
-    protected initCollector() {
+    protected initCollectors() {
         if (!this.message) {
             throw new Error(
                 "PlayerMenu error: initCollector was not able to properly initialize the message property. Variable 'message' is left undefined."
             );
         }
 
-        //initializer ofcollector
-        const collector = this.message.createMessageComponentCollector({
-            filter: (i) => i.user.id === this.interaction.user.id,
-            componentType: ComponentType.Button,
-            time: this.collectionTime,
-        });
+        // initialize button collector
+        const collector = this.registerCollector(
+            this.message.createMessageComponentCollector<ComponentType.Button>({
+                filter: (i) => i.user.id === this.interaction.user.id,
+                time: this.collectionTime,
+            })
+        );
 
         //The responses once buttons are pressed
         collector.on("collect", (i) => {
