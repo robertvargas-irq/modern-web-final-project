@@ -113,17 +113,7 @@ export default class GameManager {
                                 Math.floor(this.roundEndMs / 1_000),
                                 TimestampStyles.RelativeTime
                             )}`,
-                            fields: [
-                                {
-                                    name: `__🃏 Dealer's Cards: ${this.dealer.cards.value} Total Value / 21__`,
-                                    value:
-                                        ">>> " +
-                                        formatCardsAsString(
-                                            this.dealer.cards.resolveAll()
-                                        ) +
-                                        "\n 🔎 *Hidden card*",
-                                },
-                            ],
+                            fields: [dealerField(this.dealer)],
                         }),
                     ],
                     components: [
@@ -248,14 +238,7 @@ export default class GameManager {
                                     value: ">>> " + formatPlayers(digest.tie),
                                     inline: true,
                                 },
-                                {
-                                    name: `__🃏 Dealer's Cards: ${this.dealer.cards.value} Total Value / 21__`,
-                                    value:
-                                        ">>> " +
-                                        formatCardsAsString(
-                                            this.dealer.cards.resolveAll()
-                                        ),
-                                },
+                                dealerField(this.dealer),
                             ],
                         }),
                     ],
@@ -371,4 +354,20 @@ function formatPlayers(players: Player[]) {
               .map((p) => `(\`${p.cards.value}\`) ${p.member.displayName}`)
               .join("\n")
         : "None";
+}
+
+/**
+ * Format an embed field for the dealer.
+ * @param dealer Dealer of the game.
+ * @param hiddenCard Display the hidden card message.
+ * @returns Embed field.
+ */
+function dealerField(dealer: Dealer, hiddenCard: boolean = false) {
+    return {
+        name: `__🃏 Dealer's Cards: (\`${dealer.cards.value}\`) Total Value / 21__`,
+        value:
+            ">>> " +
+            formatCardsAsString(dealer.cards.resolveAll()) +
+            (hiddenCard ? "\n 🔎 *Hidden card*" : ""),
+    };
 }
