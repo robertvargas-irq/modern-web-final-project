@@ -6,6 +6,8 @@ import {
     ActionRowBuilder,
     RepliableInteraction,
     Colors,
+    time,
+    TimestampStyles,
 } from "discord.js";
 
 import { Player } from "../Player/Player.js";
@@ -36,8 +38,9 @@ const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(
  * Wrapper for Player Menus
  */
 export default class PlayerMenu extends InteractiveMenu {
-    private player: Player;
+    private readonly initTime: number;
     private collectionTime: number;
+    private player: Player;
 
     /**
      * Creates a new PlayerMenu
@@ -54,6 +57,7 @@ export default class PlayerMenu extends InteractiveMenu {
         });
         this.player = player;
         this.collectionTime = collectionTime;
+        this.initTime = Date.now();
     }
 
     /**
@@ -68,9 +72,10 @@ export default class PlayerMenu extends InteractiveMenu {
                 `Welcome ${
                     this.player.member.displayName
                 } to your BlackJack game!\n
-                 You will force stay <t:${Math.floor(
-                     Date.now() / 1000 + 10
-                 )}:R>`
+                 You will force stay ${time(
+                     Math.floor((this.initTime + this.collectionTime) / 1_000),
+                     TimestampStyles.RelativeTime
+                 )}`
             )
             .setColor(0x32cd32)
             .setThumbnail(this.interaction.user.displayAvatarURL())
