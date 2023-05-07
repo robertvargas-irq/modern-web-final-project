@@ -112,6 +112,36 @@ export default class PlayerManager {
     }
 
     /**
+     * Get a digest of players' win states.
+     * @returns Object of mapped players to each type of win-state.
+     */
+    getPlayerDigest() {
+        const digest: Record<"win" | "loss" | "bust" | "tie", Player[]> = {
+            win: [],
+            loss: [],
+            bust: [],
+            tie: [],
+        };
+        for (const player of this.players.values()) {
+            switch (player.state) {
+                case "win":
+                    digest.win.push(player);
+                    break;
+                case "loss":
+                    digest.loss.push(player);
+                    break;
+                case "bust":
+                    digest.loss.push(player);
+                    break;
+                case "tie":
+                    digest.tie.push(player);
+                    break;
+            }
+        }
+        return digest;
+    }
+
+    /**
      * Set a player's stay status.
      * @returns
      * - True if succesful.
