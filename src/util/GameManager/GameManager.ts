@@ -155,6 +155,30 @@ export default class GameManager {
                 while (this.dealer.cards.value < DealerMin) {
                     this.dealer.cards.add(this.deck.pullRandomCard());
                 }
+
+                // check each player that is still in the game against the dealer's hand
+                for (const player of this.players.getAllPlayers()) {
+                    // skip players who already busted
+                    if (player.lost) continue;
+
+                    // win if the dealer has busted or if the player has higher hand value
+                    if (
+                        this.dealer.cards.bust ||
+                        player.cards.value > this.dealer.cards.value
+                    ) {
+                        player.win();
+                        continue;
+                    }
+
+                    // players who have less lose
+                    if (player.cards.value < this.dealer.cards.value) {
+                        player.loss("loss");
+                        continue;
+                    }
+
+                    // players who break-even receive nothing in return
+                    player.tie();
+                }
                 break;
             }
             case "end": {
