@@ -7,13 +7,17 @@ import {
     ButtonBuilder,
     ButtonInteraction,
     ButtonStyle,
+    Colors,
     ComponentType,
     EmbedBuilder,
     GuildTextBasedChannel,
     InteractionCollector,
+    Message,
     TimestampStyles,
     time,
 } from "discord.js";
+import { formatCardsAsString } from "../Cards/CardCosmetics.js";
+import { Player } from "../Player/Player.js";
 
 /**
  * Number of card decks to be mixed into
@@ -41,7 +45,8 @@ export default class GameManager {
     public readonly interaction: GuildInteractions.ChatInput;
     public readonly channel: GuildTextBasedChannel;
     public readonly players: PlayerManager;
-    private collector?: InteractionCollector<ButtonInteraction<"cached">>;
+    private collector?: InteractionCollector<ButtonInteraction>;
+    private gameDisplayMessage?: Message;
     private roundEndMs: number;
     private state: number;
 
@@ -95,14 +100,27 @@ export default class GameManager {
                 this.roundEndMs = Date.now() + GamePlayerTimeMs;
 
                 // display a menu that prompts users to open their game menus
-                const message = await this.channel.send({
+                this.dealer.cards.add(this.deck.pullRandomCard());
+                this.gameDisplayMessage = await this.channel.send({
                     embeds: [
                         new EmbedBuilder({
+                            color: Colors.Aqua,
                             title: "Debug",
                             description: `Game will end ${time(
                                 Math.floor(this.roundEndMs / 1_000),
                                 TimestampStyles.RelativeTime
                             )}`,
+                            fields: [
+                                {
+                                    name: `🃏 Dealer's Cards: ${this.dealer.cards.value} Total Value / 21`,
+                                    value:
+                                        ">>> " +
+                                        formatCardsAsString(
+                                            this.dealer.cards.resolveAll()
+                                        ) +
+                                        "\n 🔎 *Hidden card*",
+                                },
+                            ],
                         }),
                     ],
                     components: [
@@ -121,7 +139,7 @@ export default class GameManager {
 
                 // init collector for game button
                 this.collector =
-                    message.createMessageComponentCollector<ComponentType.Button>(
+                    this.gameDisplayMessage.createMessageComponentCollector<ComponentType.Button>(
                         {
                             filter: (i) => this.players.playerExists(i.user.id),
                             time: GamePlayerTimeMs,
@@ -189,6 +207,55 @@ export default class GameManager {
             }
             case "end": {
                 // based on dealer results, display
+                const message = this.gameDisplayMessage as Message;
+                const digest = this.players.getPlayerDigest();
+                message.edit({
+                    embeds: [
+                        new EmbedBuilder({
+                            title:
+                                "🧮 The results are in!" +
+                                (this.dealer.cards.bust ? " It's a bust!" : ""),
+                            color: this.dealer.cards.bust
+                                ? Colors.Fuchsia
+                                : Colors.Blue,
+                            description:
+                                "> " +
+                                (this.dealer.cards.bust
+                                    ? "It appears the dealer has **busted their hand**! All players who are still standing receive a full win!"
+                                    : "Time to tally up your scores! All who are still in the game please check your player menu to view who won!"),
+                            fields: [
+                                {
+                                    name: "❇️ Winners",
+                                    value: ">>> " + formatPlayers(digest.win),
+                                    inline: true,
+                                },
+                                {
+                                    name: "🔻 Loss (vs. dealer)",
+                                    value: ">>> " + formatPlayers(digest.loss),
+                                    inline: true,
+                                },
+                                {
+                                    name: "🚩 Loss (Bust)",
+                                    value: ">>> " + formatPlayers(digest.bust),
+                                    inline: true,
+                                },
+                                {
+                                    name: "🔹 Tied",
+                                    value: ">>> " + formatPlayers(digest.tie),
+                                    inline: true,
+                                },
+                                {
+                                    name: `🃏 Dealer's Cards: ${this.dealer.cards.value} Total Value / 21`,
+                                    value:
+                                        ">>> " +
+                                        formatCardsAsString(
+                                            this.dealer.cards.resolveAll()
+                                        ),
+                                },
+                            ],
+                        }),
+                    ],
+                });
             }
         }
 
@@ -255,11 +322,6 @@ export default class GameManager {
      * Start the game.
      */
     start() {
-        // update lobby embed to say the game has started and disable the buttons
-        this.interaction.editReply({
-            content: "The game has started!",
-        });
-
         // error if the game is empty
         if (this.players.isEmpty) {
             throw new Error(
@@ -278,4 +340,15 @@ export default class GameManager {
         this.advanceGameState();
         this.handleGameLogic();
     }
+}
+
+/**
+ * Get a newline-separated string of players.
+ * @param players Players to format.
+ * @returns Stringified, newline-separated list of players.
+ */
+function formatPlayers(players: Player[]) {
+    return players.length > 0
+        ? players.map((p) => p.member.displayName).join("\n")
+        : "None.";
 }
