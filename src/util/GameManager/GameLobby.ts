@@ -3,9 +3,11 @@ import LobbyEmbed from "../Embeds/LobbyEmbed.js";
 import GameManager from "./GameManager.js";
 import { fetchMember } from "../MemberUtil/MemberFetch.js";
 
+const CollectionTime = 120_000;
+
 export default async function InitGameLobby(gameManager: GameManager) {
     const interaction = gameManager.interaction;
-    const lobbyEmbed = new LobbyEmbed(gameManager.players);
+    const lobbyEmbed = new LobbyEmbed(gameManager.players, CollectionTime);
 
     console.log("A lobby has been created");
 
@@ -21,7 +23,7 @@ export default async function InitGameLobby(gameManager: GameManager) {
     const collector =
         message.createMessageComponentCollector<ComponentType.Button>({
             filter: (i) => i.user.id === interaction.user.id,
-            time: 120_000,
+            time: CollectionTime,
         });
 
     // collector that responds to the buttons
@@ -59,15 +61,16 @@ export default async function InitGameLobby(gameManager: GameManager) {
             console.log(`Removed player ${interaction.member.displayName}`);
         }
 
+        // end the collector to start the game
         if (i.customId === "start-game") {
-            gameManager.start();
+            collector.stop();
         }
     });
 
-    // starts game in two minutes
-    setTimeout(async () => {
+    collector.on("end", () => {
+        // start game if waiting
         if (gameManager.currentState === "waiting") {
             gameManager.start();
         }
-    }, 120 * 1000);
+    });
 }

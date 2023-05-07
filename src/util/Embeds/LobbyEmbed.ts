@@ -13,8 +13,8 @@ export default class LobbyEmbed {
     startTime: number;
     players: PlayerManager;
 
-    constructor(players: PlayerManager) {
-        this.startTime = Math.floor(Date.now() / 1000 + 120);
+    constructor(players: PlayerManager, collectionTime: number) {
+        this.startTime = Math.floor((Date.now() + collectionTime) / 1000);
         this.players = players;
     }
 
