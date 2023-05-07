@@ -5,7 +5,8 @@ import PlayerMenu from "../PlayerMenu/PlayerMenu.js";
 import PlayerSocket from "../GameManager/PlayerSocket.js";
 import GameManager from "../GameManager/GameManager.js";
 
-type PlayerState = "playing" | "loss" | "stay" | "force-stay";
+type PlayerState = "playing" | "stay" | "force-stay" | "win" | LossStates;
+type LossStates = "loss" | "bust";
 export type PlayerAction = "hit" | "stay";
 
 /**
@@ -58,6 +59,45 @@ export class Player {
     forceStay() {
         this.state = "force-stay";
         if (this.menu) this.menu.terminate("time");
+    }
+
+    /**
+     * Set a player as win and modify the database
+     * entry accordingly.
+     * @returns Promise for saving the member document
+     * to the database.
+     */
+    win() {
+        this.state = "win";
+
+        // award points based on player's hand
+
+        // increment wins and save
+        this.memberDoc.wins++;
+        return this.memberDoc.save();
+    }
+
+    /**
+     * Set a player as loss and modify the database
+     * entry accordingly.
+     * @param reason Reason for the loss.
+     * @returns Promise for saving the member document
+     * to the database.
+     */
+    loss(reason: LossStates) {
+        this.state = reason;
+        switch (reason) {
+            case "bust": {
+                break;
+            }
+            case "loss": {
+                break;
+            }
+        }
+
+        // increment losses and save
+        this.memberDoc.losses++;
+        return this.memberDoc.save();
     }
 
     /**
