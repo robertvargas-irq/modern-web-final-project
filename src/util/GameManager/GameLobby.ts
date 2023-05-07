@@ -1,4 +1,4 @@
-import { ComponentType } from "discord.js";
+import { Colors, ComponentType } from "discord.js";
 import LobbyEmbed from "../Embeds/LobbyEmbed.js";
 import GameManager from "./GameManager.js";
 import { fetchMember } from "../MemberUtil/MemberFetch.js";
@@ -12,12 +12,11 @@ export default async function InitGameLobby(gameManager: GameManager) {
     console.log("A lobby has been created");
 
     // create and display the lobby emebed
-    const { embeds: embed, components: actionRow } =
-        lobbyEmbed.createMessagePayload();
+    const { embeds, components } = lobbyEmbed.createMessagePayload();
 
     const message = await interaction.reply({
-        embeds: embed,
-        components: actionRow,
+        embeds,
+        components,
     });
 
     const collector =
@@ -71,6 +70,16 @@ export default async function InitGameLobby(gameManager: GameManager) {
         // start game if waiting
         if (gameManager.currentState === "waiting") {
             gameManager.start();
+
+            // update lobby embed to say the game has started and disable the buttons
+            embeds[0]
+                .setFields([])
+                .setColor(Colors.Navy)
+                .setDescription("> The game has begun!");
+            message.edit({
+                embeds,
+                components: [],
+            });
         }
     });
 }
