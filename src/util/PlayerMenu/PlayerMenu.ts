@@ -12,6 +12,7 @@ import {
 
 import { Player } from "../Player/Player.js";
 import InteractiveMenu from "../InteractiveMenu/InteractiveMenu.js";
+import { formatCardsAsString } from "../Cards/CardCosmetics.js";
 
 const catHoldingCard =
     "https://media.discordapp.net/attachments/1090471775768428627/1099094479903928330/bpt24i98nsp41.jpg?width=554&height=543";
@@ -93,13 +94,10 @@ export default class PlayerMenu extends InteractiveMenu {
                     inline: true,
                 },
                 {
-                    name: `Cards: ${this.player.cards.value} Total Value / 21`,
-                    value: !this.player.cards.empty
-                        ? this.player.cards
-                              .resolveAll()
-                              .map((c) => `→ ${c.rankName} of ${c.suitName}`)
-                              .join("\n")
-                        : "No cards currently held.",
+                    name: `🃏 Cards: ${this.player.cards.value} Total Value / 21`,
+                    value:
+                        ">>> " +
+                        formatCardsAsString(this.player.cards.resolveAll()),
                 },
             ]);
 
