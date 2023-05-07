@@ -5,7 +5,7 @@ import PlayerMenu from "../PlayerMenu/PlayerMenu.js";
 import PlayerSocket from "../GameManager/PlayerSocket.js";
 import GameManager from "../GameManager/GameManager.js";
 
-type PlayerState =
+export type PlayerState =
     | "playing"
     | "stay"
     | "force-stay"
