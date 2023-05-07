@@ -10,6 +10,8 @@ import LobbyEmbed from "../Embeds/LobbyEmbed.js";
 const CardDecks = 5;
 const GameStates = ["waiting", "players", "dealer", "end"] as const;
 
+export type GameManagerActions = "force-stay";
+
 export default class GameManager {
     private interaction: GuildInteractions.ChatInput;
     private dealer: Dealer;
@@ -43,6 +45,26 @@ export default class GameManager {
      */
     advanceGameState() {
         this.state = (this.state + 1) % GameStates.length;
+    }
+
+    /**
+     * Deal a card to a given player from the deck.
+     * @param playerId The player to deal to.
+     */
+    dealCard(playerId: string) {
+        const player = this.players.getPlayer(playerId);
+        if (!player) return;
+
+        // add a new card to the player's hand
+        player.cards.add(this.deck.pullRandomCard());
+    }
+
+    /**
+     * Have a player stayed.
+     * @param playerId The player to stay.
+     */
+    stayPlayer(playerId: string) {
+        return this.players.setStay(playerId);
     }
 
     /**
