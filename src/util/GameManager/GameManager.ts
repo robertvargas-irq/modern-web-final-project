@@ -99,8 +99,11 @@ export default class GameManager {
                 // initialize round end time
                 this.roundEndMs = Date.now() + GamePlayerTimeMs;
 
-                // display a menu that prompts users to open their game menus
+                // deal starting cards
                 this.dealer.cards.add(this.deck.pullRandomCard());
+                this.dealStartingCards();
+
+                // display a menu that prompts users to open their game menus
                 this.gameDisplayMessage = await this.channel.send({
                     embeds: [
                         new EmbedBuilder({
@@ -187,7 +190,8 @@ export default class GameManager {
                         this.dealer.cards.bust ||
                         player.cards.value > this.dealer.cards.value
                     ) {
-                        player.win();
+                        if (player.cards.blackjack) player.win("black-jack");
+                        else player.win("win");
                     }
 
                     // players who have less lose
@@ -225,22 +229,22 @@ export default class GameManager {
                                     : "Time to tally up your scores! All who are still in the game please check your player menu to view who won!"),
                             fields: [
                                 {
-                                    name: "❇️ Winners",
+                                    name: "__❇️ Winners__",
                                     value: ">>> " + formatPlayers(digest.win),
                                     inline: true,
                                 },
                                 {
-                                    name: "🔻 Loss (vs. dealer)",
+                                    name: "__🔻 Loss (vs. dealer)__",
                                     value: ">>> " + formatPlayers(digest.loss),
                                     inline: true,
                                 },
                                 {
-                                    name: "🚩 Loss (Bust)",
+                                    name: "__🚩 Loss (Bust)__",
                                     value: ">>> " + formatPlayers(digest.bust),
                                     inline: true,
                                 },
                                 {
-                                    name: "🔹 Tied",
+                                    name: "__🔹 Tied__",
                                     value: ">>> " + formatPlayers(digest.tie),
                                     inline: true,
                                 },
@@ -279,17 +283,31 @@ export default class GameManager {
      * Deal a card to a given player from the deck.
      * @param playerId The player to deal to.
      */
-    dealCard(playerId: string) {
+    dealCard(playerId: string, cardsToDeal: number = 1) {
         const player = this.players.getPlayer(playerId);
         if (!player) return;
 
         // add a new card to the player's hand
-        player.cards.add(this.deck.pullRandomCard());
+        for (let i = 0; i < cardsToDeal; i++) {
+            player.cards.add(this.deck.pullRandomCard());
+        }
 
         // if they bust, mark as bust
         if (player.cards.bust) {
             player.loss("bust");
             this.advanceToDealerIfReady();
+        }
+    }
+
+    /**
+     * Deal all players their starting cards.
+     */
+    dealStartingCards() {
+        for (const { win, cards, id: pId } of this.players.getPlayerIter()) {
+            this.dealCard(pId, 2);
+            if (cards.blackjack) {
+                win("dealt-black-jack");
+            }
         }
     }
 
@@ -349,6 +367,8 @@ export default class GameManager {
  */
 function formatPlayers(players: Player[]) {
     return players.length > 0
-        ? players.map((p) => p.member.displayName).join("\n")
-        : "None.";
+        ? players
+              .map((p) => `(\`${p.cards.value}\`) ${p.member.displayName}`)
+              .join("\n")
+        : "None";
 }
