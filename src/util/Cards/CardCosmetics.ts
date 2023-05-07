@@ -54,7 +54,7 @@ export const GetRankName = (rank: number) => {
     }
     // face cards
     if (rank > 9) {
-        return FaceCards[rank - 9];
+        return FaceCards[rank - 10];
     }
     // numbered cards
     return `${rank + 1}`;
