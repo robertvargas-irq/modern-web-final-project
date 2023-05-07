@@ -100,6 +100,59 @@ export default class PlayerMenu extends InteractiveMenu {
                     )
                     .setImage(catBeingCardDisposal);
                 break;
+            // inform the player of a bust (> 21)
+            case "bust":
+                embed
+                    .setFields([
+                        {
+                            name: "⏬ Points Lost",
+                            value: "> FILL ME IN.",
+                            inline: true,
+                        },
+                        {
+                            name: "📛 Total Losses",
+                            value: `> ${this.player.memberDoc.losses}`,
+                            inline: true,
+                        },
+                    ])
+                    .setDescription(
+                        "Oh no! Unfortunately, you have gone over 21, and have lost the game."
+                    );
+            case "loss":
+                embed
+                    .setFields([
+                        {
+                            name: "⏬ Points Lost",
+                            value: "> FILL ME IN.",
+                            inline: true,
+                        },
+                        {
+                            name: "📛 Total Losses",
+                            value: `> ${this.player.memberDoc.losses}`,
+                            inline: true,
+                        },
+                    ])
+                    .setDescription(
+                        "It appears the house has won. Unfortunately, points must be deducted for this."
+                    );
+            // inform the player of their win
+            case "win":
+                embed
+                    .setFields([
+                        {
+                            name: "⏫ Points Gained",
+                            value: "> FILL ME IN.",
+                            inline: true,
+                        },
+                        {
+                            name: "❇️ Total Wins",
+                            value: `> ${this.player.memberDoc.wins}`,
+                            inline: true,
+                        },
+                    ])
+                    .setDescription(
+                        "Hooray! You've beat the house, and have gained some points for your bravery!"
+                    );
         }
 
         return [embed];
