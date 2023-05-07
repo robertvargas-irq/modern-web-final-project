@@ -172,6 +172,13 @@ export class Player {
         // open the menu
         return this.menu.render();
     }
+
+    /**
+     * Terminate the player's menu early if necessary.
+     */
+    terminateMenu() {
+        this.menu?.terminate();
+    }
 }
 
 /**
