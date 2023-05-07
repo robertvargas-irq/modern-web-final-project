@@ -1,5 +1,10 @@
-import { Schema, model } from "mongoose";
+import { HydratedDocument, Schema, model } from "mongoose";
 import User from "../interfaces/User.js";
+
+/**
+ * User Document entry from the database.
+ */
+export type UserDocument = HydratedDocument<User>;
 
 const userSchema = new Schema<User>({
     userId: {

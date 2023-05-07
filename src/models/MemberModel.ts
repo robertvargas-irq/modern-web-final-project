@@ -1,5 +1,9 @@
 import { HydratedDocument, Schema, model } from "mongoose";
 import Member from "../interfaces/Member.js";
+
+/**
+ * Member Document entry from the database.
+ */
 export type MemberDocument = HydratedDocument<Member>;
 
 const memberSchema = new Schema<Member>({
@@ -10,6 +14,26 @@ const memberSchema = new Schema<Member>({
     guildId: {
         type: String,
         required: true,
+    },
+    displayName: {
+        type: String,
+        default: null,
+    },
+    bio: {
+        type: String,
+        default: null,
+    },
+    wins: {
+        type: Number,
+        default: 0,
+    },
+    losses: {
+        type: Number,
+        default: 0,
+    },
+    points: {
+        type: Number,
+        default: 0,
     },
 });
 
