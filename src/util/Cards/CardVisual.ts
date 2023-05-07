@@ -1,4 +1,9 @@
-import { GetImageURL, GetRankName, GetSuitName } from "./CardCosmetics.js";
+import {
+    GetImageURL,
+    GetRankName,
+    GetSuitEmoji,
+    GetSuitName,
+} from "./CardCosmetics.js";
 import { CardData } from "./CardData.js";
 
 /**
@@ -9,11 +14,13 @@ import { CardData } from "./CardData.js";
 export default class CardVisual {
     public readonly rankName;
     public readonly suitName;
+    public readonly suitEmoji;
     public readonly imageURL;
     constructor({ rank, suit }: CardData) {
         // assign cosmetic information
         this.rankName = GetRankName(rank);
         this.suitName = GetSuitName(suit);
+        this.suitEmoji = GetSuitEmoji(suit);
         this.imageURL = GetImageURL(rank, suit);
     }
 }
