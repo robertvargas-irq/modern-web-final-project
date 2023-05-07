@@ -94,9 +94,8 @@ export default abstract class InteractiveMenu {
      * @returns Once the interaction has not be replied to
      */
     async render() {
-        //Intitial Render
+        // initial Render
         if (!this.interaction.replied) {
-            this.generateEmbeds();
             this.message = await this.interaction.reply({
                 ...this.generateMessagePayload(),
                 fetchReply: true,
@@ -105,6 +104,7 @@ export default abstract class InteractiveMenu {
             return;
         }
 
+        // subsequent re-renders
         this.interaction.editReply(this.generateMessagePayload());
     }
 }
