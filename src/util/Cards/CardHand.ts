@@ -35,6 +35,13 @@ export default class CardHand {
     }
 
     /**
+     * Check if the player has exactly 21 cards.
+     */
+    get blackjack() {
+        return this.totalValue === 21;
+    }
+
+    /**
      * Add a card to the hand.
      * @param card
      */
