@@ -36,6 +36,18 @@ export default class PlayerManager {
     }
 
     /**
+     * Check if all players are ready.
+     */
+    get allReady() {
+        const players = this.getAllPlayers();
+        for (let i = 0; i < players.length; i++) {
+            if (players[i].playing) return false;
+        }
+
+        return true;
+    }
+
+    /**
      * Add a player to the game.
      * @param UserDB Member database entry.
      * @param member Discord member snowflake.
