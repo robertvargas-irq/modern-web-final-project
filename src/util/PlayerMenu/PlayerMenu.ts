@@ -13,6 +13,7 @@ import {
 import { Player } from "../Player/Player.js";
 import InteractiveMenu from "../InteractiveMenu/InteractiveMenu.js";
 import { formatCardsAsString } from "../Cards/CardCosmetics.js";
+import { CalculatePoints } from "../Player/PlayerPoints.js";
 
 const catHoldingCard =
     "https://media.discordapp.net/attachments/1090471775768428627/1099094479903928330/bpt24i98nsp41.jpg?width=554&height=543";
@@ -108,7 +109,7 @@ export default class PlayerMenu extends InteractiveMenu {
                     .setFields([])
                     .setImage(catBeingCardDisposal)
                     .setDescription(
-                        `You have chosen to stay! \n\nWaiting for other players now! \n\nGood luck ${this.player.member.displayName}`
+                        `You have chosen to stay!\nWaiting for other players now.\nGood luck, **${this.player.member.displayName}**!`
                     );
                 break;
             // inform the player if they were forced to stay
@@ -129,7 +130,10 @@ export default class PlayerMenu extends InteractiveMenu {
                     .setFields([
                         {
                             name: "⏬ Points Lost",
-                            value: "> FILL ME IN.",
+                            value: `> \`${CalculatePoints(
+                                this.player.state,
+                                this.player.cards.value
+                            )}\``,
                             inline: true,
                         },
                         {
@@ -151,7 +155,10 @@ export default class PlayerMenu extends InteractiveMenu {
                     .setFields([
                         {
                             name: "⏬ Points Lost",
-                            value: "> FILL ME IN.",
+                            value: `> \`${CalculatePoints(
+                                this.player.state,
+                                this.player.cards.value
+                            )}\``,
                             inline: true,
                         },
                         {
@@ -172,7 +179,10 @@ export default class PlayerMenu extends InteractiveMenu {
                     .setFields([
                         {
                             name: "↔️ Points Gained",
-                            value: "> `0`",
+                            value: `> \`${CalculatePoints(
+                                this.player.state,
+                                this.player.cards.value
+                            )}\``,
                             inline: true,
                         },
                         {
@@ -194,7 +204,10 @@ export default class PlayerMenu extends InteractiveMenu {
                     .setFields([
                         {
                             name: "⏫ Points Gained",
-                            value: "> FILL ME IN.",
+                            value: `> \`${CalculatePoints(
+                                this.player.state,
+                                this.player.cards.value
+                            )}\``,
                             inline: true,
                         },
                         {
@@ -205,6 +218,52 @@ export default class PlayerMenu extends InteractiveMenu {
                     ])
                     .setDescription(
                         "Hooray! You've beat the house, and have gained some points for your bravery!"
+                    );
+                break;
+            case "black-jack":
+                embed
+                    .setTitle("🃏 BlackJack!")
+                    .setColor(Colors.Purple)
+                    .setImage(catDancing)
+                    .setFields([
+                        {
+                            name: "⏫ Points Gained",
+                            value: `> \`${CalculatePoints(
+                                this.player.state,
+                                this.player.cards.value
+                            )}\``,
+                            inline: true,
+                        },
+                        {
+                            name: "❇️ Total Wins",
+                            value: `> ${this.player.memberDoc.wins}`,
+                            inline: true,
+                        },
+                    ])
+                    .setDescription("Congratulations! You've reached 21!");
+                break;
+            case "dealt-black-jack":
+                embed
+                    .setTitle("🎴 Dealt a BlackJack hand!")
+                    .setColor(Colors.Fuchsia)
+                    .setImage(catDancing)
+                    .setFields([
+                        {
+                            name: "⏫ Points Gained",
+                            value: `> \`${CalculatePoints(
+                                this.player.state,
+                                this.player.cards.value
+                            )}\``,
+                            inline: true,
+                        },
+                        {
+                            name: "❇️ Total Wins",
+                            value: `> ${this.player.memberDoc.wins}`,
+                            inline: true,
+                        },
+                    ])
+                    .setDescription(
+                        "Looks like the house goofed, you've been dealt a winning hand!"
                     );
                 break;
         }
