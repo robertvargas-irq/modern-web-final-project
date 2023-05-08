@@ -113,7 +113,7 @@ export default class GameManager {
                                 Math.floor(this.roundEndMs / 1_000),
                                 TimestampStyles.RelativeTime
                             )}`,
-                            fields: [dealerField(this.dealer)],
+                            fields: [dealerField(this.dealer, true)],
                         }),
                     ],
                     components: [
